@@ -42,7 +42,7 @@ optional arguments:
 required arguments:
   -u USERID, --userid USERID
                         Apple ID for use with iTunes Connect
-  -p PASSWORD_KEYCHAIN_ITEM, --password-keychain-item PASSWORD_KEYCHAIN_item
+  -p PASSWORD_KEYCHAIN_ITEM, --password-keychain-item PASSWORD_KEYCHAIN_ITEM
                         name of the macOS Keychain item that holds the Apple
                         ID password (cannot be used together with -P)
   -P PASSWORD, --password PASSWORD
@@ -77,7 +77,7 @@ Because your Apple ID could have access to multiple accounts, you will sometimes
 The result is a list of account numbers you can then specify with the `-a` or `--account` argument in later queries regarding sales reports. Similarly, you'd use `getAccounts Finance` in order to find out account numbers that can be used for financial report queries.
 
 #### Fetching the password from the Keychain
-But what about the cleartext password following the `-P` parameter? If you want to store and fetch it securely from the OS X Keychain instead, you need to create a new keychain item. To do so, open the **Keychain Access.app**, select the default keychain, press **⌘N** and fill in your Apple ID login credentials. The item name you set for this new keychain entry is going to be what you have to supply for `-p` (lowercase now!).
+But what about the cleartext password following the `-P` parameter? If you want to store and fetch it securely from the macOS Keychain instead, you need to create a new keychain item. To do so, open the **Keychain Access.app**, select the default keychain, press **⌘N** and fill in your Apple ID login credentials. The item name you set for this new keychain entry is going to be what you have to supply for `-p` (now lowercase!).
 
 The following example queries iTunes Connect's availability status for financial reports while fetching the Apple ID password from the Keychain item named "iTC Access":
 
@@ -85,7 +85,7 @@ The following example queries iTunes Connect's availability status for financial
 ./reporter.py -u your@apple-id.com -p "iTC Access" getStatus Finance
 ```
 
-### Retrieving reports
+#### Retrieving reports
 Let's get to the point of this tool now: Retrieving reports from iTunes Connect.
 To find out which vendor numbers you can query, you'll first need to get a list of available vendors, using (one of) the account number(s) you have found out with `getAccounts` before:
 
@@ -99,13 +99,13 @@ The resulting vendor number(s) can then be used to get the actual reports. In th
 ./reporter.py -u your@apple-id.com -p "iTC Access" -a 2821955 getSalesReport 85442109 Daily 20160818
 ```
 
-Likewise, the following example fetches a financial report for sales in the US in the first period of 2016 (according to Apple's fiscal calendar):
+Likewise, the following example fetches a financial report for sales in the US region in the first period of 2016 (according to Apple's fiscal calendar):
 
 ```sh
 ./reporter.py -u your@apple-id.com -p "iTC Access" -a 2821955 getFinancialReport 85442109 US 2016 01
 ```
 
-These examples should do for a quick introduction. Don't forget to read Apple's [reference documentation for Reporter](https://help.apple.com/itc/appsreporterguide/). Also, you can get further help for a specific command by supplying `-h` after the command's name. For example: 
+These examples should do for a quick introduction. Don't forget to read Apple's [reference documentation](https://help.apple.com/itc/appsreporterguide/) for **Reporter**. Also, you can get further help for a specific command by supplying `-h` after the command's name. For example: 
 
 ```sh
 ./reporter.py getFinancialReport -h
