@@ -8,10 +8,10 @@ Opposed to Apple's tool, it can fetch iTunes Connect login credentials from the 
 ## Why?
 
 ### Once upon a time, there was autoingestion …
-In the past, Apple has provided a tool called `autoingest` for automated retrieving of sales reports from iTunes Connect. While this tool worked quite reliably, it needed a full blown Java Runtime Environment installed. 
+In the past, Apple has provided a tool called **autoingest** for automated retrieving of sales reports from iTunes Connect. While this tool worked quite reliably, it needed a full blown Java Runtime Environment installed. 
 
 ### … nowadays, it's all about Reporter
-Apple will cut off autoingestion by the end of November 2016. It already has been replaced by a new and a bit more streamlined tool called `Reporter`. Unfortunately, `Reporter` is based on Java, too. It also suffers from a minor but annoying security threat as it needs to read iTunes Connect login credentials from a cleartext file.
+Apple will cut off autoingestion by the end of November 2016. It already has been replaced by a new and a bit more streamlined tool called **Reporter**. Unfortunately, **Reporter** is based on Java, too. It also suffers from a minor but annoying security threat as it needs to read iTunes Connect login credentials from a cleartext file.
 
 ### Java really is a sledge hammer to crack this nut
 There really is no compelling reason to employ a Java tool with its somewhat heavyweight dependency on JRE in order to download a few reports from iTunes Connect. Apart from the Apple backend engineering staff really being into Java, apparently. Also, storing passwords in cleartext isn't state of the art anymore.
@@ -20,10 +20,10 @@ There really is no compelling reason to employ a Java tool with its somewhat hea
 
 ## How?
 
-The argument names and values of this script have mostly been chosen to be consistent with [Apple's documentation for Reporter](https://help.apple.com/itc/appsreporterguide/). An introduction will follow shortly. In the meantime, try `./reporter.py -h` for a quick usage summary: 
+The argument names and values of this script have mostly been chosen to be consistent with [Apple's documentation for Reporter](https://help.apple.com/itc/appsreporterguide/). To get a quick overview, here is the output of `./reporter.py -h`: 
 ```text
 usage: reporter.py [-h] [-a ACCOUNT] [-m {Normal,Robot.XML}] -u USERID
-                   (-p PASSWORD_KEYCHAIN_OBJECT | -P PASSWORD)
+                   (-p PASSWORD_KEYCHAIN_ITEM | -P PASSWORD)
                    {getStatus,getAccounts,getVendors,getSalesReport,getFinancialReport,getVendorsAndRegions}
                    ...
 
@@ -42,8 +42,8 @@ optional arguments:
 required arguments:
   -u USERID, --userid USERID
                         Apple ID for use with iTunes Connect
-  -p PASSWORD_KEYCHAIN_OBJECT, --password-keychain-object PASSWORD_KEYCHAIN_OBJECT
-                        name of the macOS Keychain object that holds the Apple
+  -p PASSWORD_KEYCHAIN_ITEM, --password-keychain-item PASSWORD_KEYCHAIN_item
+                        name of the macOS Keychain item that holds the Apple
                         ID password (cannot be used together with -P)
   -P PASSWORD, --password PASSWORD
                         Apple ID password (cannot be used together with -p)
@@ -66,18 +66,57 @@ commands:
                         vendor number and region
 ```
 
-Here is an example for retrieving the daily sales report for a specific account and vendor number while fetching the Apple ID's password from the OS X Keychain:
+### Usage examples
+
+#### Querying accessible accounts
+Because your Apple ID could have access to multiple accounts, you will sometimes need to specify the account number you’d like to use. Use the following query to find out which accounts are available:
 
 ```sh
-./reporter.py -u your@apple-id.com -p "Keychain Object: iTC Password" --account 2821955 getSalesReport 85442109 Daily 20160818
+./reporter.py -u your@apple-id.com -P appleidpassword getAccounts Sales
+```
+The result is a list of account numbers you can then specify with the `-a` or `--account` argument in later queries regarding sales reports. Similarly, you'd use `getAccounts Finance` in order to find out account numbers that can be used for financial report queries.
+
+#### Fetching the password from the Keychain
+But what about the cleartext password following the `-P` parameter? If you want to store and fetch it securely from the OS X Keychain instead, you need to create a new keychain item. To do so, open the **Keychain Access.app**, select the default keychain, press **⌘N** and fill in your Apple ID login credentials. The item name you set for this new keychain entry is going to be what you have to supply for `-p` (lowercase now!).
+
+The following example queries iTunes Connect's availability status for financial reports while fetching the Apple ID password from the Keychain item named "iTC Access":
+
+```sh
+./reporter.py -u your@apple-id.com -p "iTC Access" getStatus Finance
 ```
 
-## TODO
+### Retrieving reports
+Let's get to the point of this tool now: Retrieving reports from iTunes Connect.
+To find out which vendor numbers you can query, you'll first need to get a list of available vendors, using (one of) the account number(s) you have found out with `getAccounts` before:
+
+```sh
+./reporter.py -u your@apple-id.com -p "iTC Access" --account 2821955 getVendors
+```
+
+The resulting vendor number(s) can then be used to get the actual reports. In the following example, a sales report listing the sales of a single day (2016/08/18) for vendor 85442109 is going to be retrieved: 
+
+```sh
+./reporter.py -u your@apple-id.com -p "iTC Access" -a 2821955 getSalesReport 85442109 Daily 20160818
+```
+
+Likewise, the following example fetches a financial report for sales in the US in the first period of 2016 (according to Apple's fiscal calendar):
+
+```sh
+./reporter.py -u your@apple-id.com -p "iTC Access" -a 2821955 getFinancialReport 85442109 US 2016 01
+```
+
+These examples should do for a quick introduction. Don't forget to read Apple's [reference documentation for Reporter](https://help.apple.com/itc/appsreporterguide/). Also, you can get further help for a specific command by supplying `-h` after the command's name. For example: 
+
+```sh
+./reporter.py getFinancialReport -h
+```
+
+## What's still missing
 There is currently no support for retrieving Newsstand-related reports, but I wonder if anybody using this script would really need it.
 
 ## Obligatory disclaimer
 
-There is absolutely no warranty. I do not guarantee in any way that this tool works as intended or is fully compatible with Apple's official `Reporter` tool.
+There is absolutely no warranty. I do not guarantee in any way that this tool works as intended or is fully compatible with Apple's official **Reporter** tool.
 
 ## Pull Requests
 Neither English nor Python are my native language – corrective PRs (even for style only) are very welcome!
