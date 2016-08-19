@@ -52,7 +52,7 @@ def get_accounts(credentials, service):
     endpoint = ENDPOINT_SALES if service == 'Sales' else ENDPOINT_FINANCE
     output_result(post_request(endpoint, credentials, command))
 
-def get_sales(credentials, vendor, datetype, date):
+def get_sales_report(credentials, vendor, datetype, date):
     command = 'Sales.getReport, {0},Sales,Summary,{1},{2}'.format(vendor, datetype, date)
     output_result(post_request(ENDPOINT_SALES, credentials, command))
 
@@ -70,10 +70,9 @@ def build_json_request_string(credentials, query):
     """Build a JSON string from the urlquoted credentials and the actual query input"""
 
     userid, password, account, mode = credentials
-    request_data = dict(userid=userid, password=password, version=VERSION, mode=mode, queryInput=query)
 
-    # empty account info results in error 404
-    if account: request_data.update(account=account) 
+    request_data = dict(userid=userid, password=password, version=VERSION, mode=mode, queryInput=query)
+    if account: request_data.update(account=account) # empty account info would result in error 404 
 
     request = {k: urllib.quote_plus(v) for k, v in request_data.items()}
     request = json.dumps(request)
@@ -112,7 +111,7 @@ def output_result(result):
         file = open(filename, 'w')
         file.write(content)
         file.close()
-        print header.dict['downloadmsg']
+        print header.dict['downloadmsg'].replace('.txt.gz', '.txt')
     else:
         print content
 
@@ -225,7 +224,7 @@ if __name__ == '__main__':
       elif args.command == 'getVendorsAndRegions':
           get_vendor_and_regions(credentials)
       elif args.command == 'getSalesReport':
-          get_sales(credentials, args.vendor, args.datetype, args.date)
+          get_sales_report(credentials, args.vendor, args.datetype, args.date)
       elif args.command == 'getFinancialReport':
           get_financial_report(credentials, args.vendor, args.regioncode, args.fiscalyear, args.fiscalperiod)
     except ValueError, e:
