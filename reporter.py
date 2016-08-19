@@ -73,8 +73,7 @@ def build_json_request_string(credentials, query):
     request_data = dict(userid=userid, password=password, version=VERSION, mode=mode, queryInput=query)
 
     # empty account info results in error 404
-    if account:
-       request_data.update(account=account) 
+    if account: request_data.update(account=account) 
 
     request = {k: urllib.quote_plus(v) for k, v in request_data.items()}
     request = json.dumps(request)
@@ -82,7 +81,7 @@ def build_json_request_string(credentials, query):
     return 'jsonRequest=' + request
 
 def post_request(endpoint, credentials, command):
-    """Execute the HTTP POST request and output the result"""
+    """Execute the HTTP POST request"""
 
     command = "[p=Reporter.properties, %s]" % command
     request_data = build_json_request_string(credentials, command)
@@ -132,7 +131,7 @@ def parse_arguments():
     required_args = parser.add_argument_group("required arguments")
     required_args.add_argument('-u', '--userid', required=True, help="Apple ID for use with iTunes Connect")
     mutex_group = required_args.add_mutually_exclusive_group(required=True)
-    mutex_group.add_argument('-p', '--password-keychain-object', help="name of the macOS Keychain object that holds the Apple ID password (cannot be used together with -P)")
+    mutex_group.add_argument('-p', '--password-keychain-item', help="name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)")
     mutex_group.add_argument('-P', '--password', help="Apple ID password (cannot be used together with -p)")
     
     # commands
@@ -163,11 +162,11 @@ def parse_arguments():
 def validate_arguments(args):
     """Do some additional checks on the passed arguments which argparse couldn't handle directly"""
 
-    if args.password_keychain_object:
+    if args.password_keychain_item:
        try:
-           keychain.find_generic_password(None, args.password_keychain_object, '')
+           keychain.find_generic_password(None, args.password_keychain_item, '')
        except:
-           raise ValueError("Error: Could not find an object named '{0}' in the default Keychain".format(args.password_keychain_object))
+           raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.password_keychain_item))
 
     if not args.account and (args.command == 'getVendorsAndRegions' or args.command == 'getVendors' or args.command == 'getFinancialReport'):
         raise ValueError("Error: Argument -a/--account is needed for command '%s'" % args.command)
@@ -212,7 +211,7 @@ if __name__ == '__main__':
       print e
       exit(-1)
 
-    password = keychain.find_generic_password(None, args.password_keychain_object, '') if args.password_keychain_object else args.password
+    password = keychain.find_generic_password(None, args.password_keychain_item, '') if args.password_keychain_item else args.password
 
     credentials = (args.userid, password, str(args.account), args.mode)
 
