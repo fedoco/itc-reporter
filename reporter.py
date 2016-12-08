@@ -85,6 +85,7 @@ def post_request(endpoint, credentials, command):
     command = "[p=Reporter.properties, %s]" % command
     request_data = build_json_request_string(credentials, command)
     request = urllib2.Request(endpoint, request_data)
+    request.add_header('Accept', 'text/html,image/gif,image/jpeg; q=.2, */*; q=.2')
 
     try:
         response = urllib2.urlopen(request)
