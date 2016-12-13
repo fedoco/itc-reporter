@@ -11,7 +11,7 @@ Opposed to Apple's tool, it can fetch iTunes Connect login credentials from the 
 In the past, Apple has provided a tool called **autoingest** for automated retrieving of sales reports from iTunes Connect. While this tool worked quite reliably, it needed a full blown Java Runtime Environment installed. 
 
 ### … nowadays, it's all about Reporter
-Apple will cut off autoingestion by the end of November 2016. It already has been replaced by a new and a bit more streamlined tool called **Reporter**. Unfortunately, **Reporter** is based on Java, too. It also suffers from a minor but annoying security threat as it needs to read iTunes Connect login credentials from a cleartext file.
+Apple has shut down autoingestion on December 13th, 2016. Fortunately, it has been replaced by a new and a bit more streamlined tool called **Reporter**. Unfortunately, **Reporter** is based on Java, too. It also suffers from a minor but annoying security threat as it needs to read iTunes Connect login credentials from a cleartext file.
 
 ### Java really is a sledge hammer to crack this nut
 There really is no compelling reason to employ a Java tool with its somewhat heavyweight dependency on JRE in order to download a few reports from iTunes Connect. Apart from the Apple backend engineering staff really being into Java, apparently. Also, storing passwords in cleartext isn't state of the art anymore.
