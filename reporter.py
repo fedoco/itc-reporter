@@ -52,8 +52,8 @@ def get_accounts(credentials, service):
     endpoint = ENDPOINT_SALES if service == 'Sales' else ENDPOINT_FINANCE
     output_result(post_request(endpoint, credentials, command))
 
-def get_sales_report(credentials, vendor, datetype, date):
-    command = 'Sales.getReport, {0},Sales,Summary,{1},{2}'.format(vendor, datetype, date)
+def get_sales_report(credentials, vendor, reporttype, datetype, date):
+    command = 'Sales.getReport, {0},{1},Summary,{2},{3}'.format(vendor, reporttype, datetype, date)
     output_result(post_request(ENDPOINT_SALES, credentials, command))
 
 def get_financial_report(credentials, vendor, regioncode, fiscalyear, fiscalperiod):
@@ -146,6 +146,7 @@ def parse_arguments():
 
     parser_4 = subparsers.add_parser('getSalesReport', help="download a sales report file for a specific date range")
     parser_4.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_4.add_argument('reporttype', choices=['Sales', 'Newsstand', 'Pre-order', 'Cloud', 'Event', 'Customer', 'Content', 'Station', 'Control', 'amEvent', 'amContent', 'amControl', 'amStreams', 'Subscription', 'SubscriptionEvent'], help="Report type")
     parser_4.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
     parser_4.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
 
@@ -225,7 +226,7 @@ if __name__ == '__main__':
       elif args.command == 'getVendorsAndRegions':
           get_vendor_and_regions(credentials)
       elif args.command == 'getSalesReport':
-          get_sales_report(credentials, args.vendor, args.datetype, args.date)
+          get_sales_report(credentials, args.vendor, args.reporttype, args.datetype, args.date)
       elif args.command == 'getFinancialReport':
           get_financial_report(credentials, args.vendor, args.regioncode, args.fiscalyear, args.fiscalperiod)
     except ValueError, e:
