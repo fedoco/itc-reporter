@@ -93,10 +93,22 @@ To find out which vendor numbers you can query, you'll first need to get a list 
 ./reporter.py -u your@apple-id.com -p "iTC Access" --account 2821955 getVendors
 ```
 
-The resulting vendor number(s) can then be used to get the actual reports. In the following example, a sales report listing the sales of a single day (2016/08/18) for vendor 85442109 is going to be retrieved: 
+The resulting vendor number(s) can then be used to get the actual reports. 
 
 ```sh
-./reporter.py -u your@apple-id.com -p "iTC Access" -a 2821955 getSalesReport 85442109 Daily 20160818
+./reporter.py -u [appleid] -p [keychainitem] -a [accountnumber] getSalesReport [vendornumber] [reporttype] [datetype] [date]
+```
+
+In the following example, a sales report listing the sales of a single day (2016/08/18) for vendor 85442109 is going to be retrieved: 
+
+```sh
+./reporter.py -u your@apple-id.com -p "iTC Access" -a 2821955 getSalesReport 85442109 Sales Daily 20160818
+```
+
+To see available options run:
+
+```sh
+./reporter.py getSalesReport -h
 ```
 
 Likewise, the following example fetches a financial report for sales in the US region in the first period of 2016 (according to Apple's fiscal calendar):
