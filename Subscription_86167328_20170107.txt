@@ -1,0 +1,119 @@
+App Name	App Apple ID	Subscription Name	Subscription Apple ID	Subscription Group ID	Subscription Duration	Customer Price	Customer Currency	Developer Proceeds	Proceeds Currency	Preserved Pricing	Proceeds Reason	Client	Device	State	Country	Active Subscriptions	Active Free Trials	Marketing Opt-Ins
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.99	CAD	6.99	CAD				iPhone	MB	CAN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365_active	1147092437	20344069	1 Year	99.99	CAD	69.99	CAD				iPhone	BC	CAN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	CO	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	99.99	CAD	69.99	CAD				iPhone	QC	CAN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	CA	USA	9	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	AR	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	PA	USA	4	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	OH	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone		HRV	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	MI	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	NJ	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	UT	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPad	MD	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	WI	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	PA	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	RI	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.99	AUD	6.99	AUD				iPhone	NSW	AUS	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	NC	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.99	CAD	6.99	CAD				iPhone	QC	CAN	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	99.99	CAD	69.99	CAD				iPhone	AB	CAN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	5.68	EUR	3.98	EUR				iPad		IRL	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	9.99	CAD	6.99	CAD				iPhone	ON	CAN	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	AL	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	VA	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	AZ	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	OH	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	420	INR	294	INR				iPhone	Maharashtra	IND	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	SC	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	57.84	EUR	40.49	EUR				iPhone		BEL	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	KS	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.98	SGD	6.99	SGD				iPhone		SGP	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.99	CAD	6.99	CAD				iPhone	ON	CAN	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	AK	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	WA	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	MO	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	56.9	EUR	39.83	EUR				iPad		IRL	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	SC	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	VA	USA	4	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	60	NOK	42	NOK				iPhone		NOR	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	9.99	CAD	6.99	CAD				iPhone	AB	CAN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	WA	USA	5	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.99	CAD	6.99	CAD				iPhone	BC	CAN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	24.99	QAR	17.49	QAR				iPhone		QAT	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	CO	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	4.16	GBP	2.91	GBP				iPhone		GBR	6	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	IN	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	TX	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	FL	USA	16	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	KS	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	AP	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	24.99	AED	17.49	AED				iPhone	DU	ARE	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	AE	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	8.69	NZD	6.08	NZD				iPhone		NZL	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPad	NY	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	FL	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	MS	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	CT	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	PA	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	TX	USA	9	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	IL	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	NY	USA	6	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	5.83	EUR	4.08	EUR				iPhone		FRA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	IL	USA	5	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	OR	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	IA	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	RI	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	GA	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	TN	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	TN	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPad	CO	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone		UKR	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	FL	USA	4	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	56.9	EUR	39.83	EUR				iPhone		IRL	4	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	5.78	EUR	4.04	EUR				iPhone	MA	ESP	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	UT	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	CA	USA	7	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	NV	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPad	MD	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	5.68	EUR	3.98	EUR				iPad		IRL	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	MD	USA	6	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	99000	IDR	69300	IDR				iPhone		IDN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	9.99	AUD	6.99	AUD				iPhone	NSW	AUS	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	GA	USA	6	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	TN	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	CT	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	SC	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	NY	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	CA	USA	26	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	VT	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	MA	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	5.68	EUR	3.98	EUR				iPhone		IRL	9	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	MI	USA	4	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	NJ	USA	8	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	5.68	EUR	3.98	EUR				iPhone		IRL	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	OK	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365_active	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	MI	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	AZ	USA	5	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	99.99	CAD	69.99	CAD				iPhone	ON	CAN	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	LA	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	NC	USA	7	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	MA	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	MD	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	NE	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	TX	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	DE	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	MN	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	IL	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	UT	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	MO	USA	3	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	KY	USA	2	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	AL	USA	4	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	NY	USA	19	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365_active	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	WA	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.99	CAD	6.99	CAD				iPhone	AB	CAN	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	44.16	GBP	30.91	GBP				iPad		GBR	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month	9.99	AUD	6.99	AUD				iPhone	QLD	AUS	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_200_30_active	1147092422	20344069	1 Month	6.99	USD	4.9	USD				iPhone	CO	USA	1	0	0
+Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year	69.99	USD	49	USD				iPhone	NC	USA	1	0	0

@@ -1,0 +1,11 @@
+Event Date	Event	App Name	App Apple ID	Subscription Name	Subscription Apple ID	Subscription Group ID	Subscription Duration	Trial	Trial Duration	Marketing Opt-In	Marketing Opt-In Duration	Preserved Pricing	Proceeds Reason	Consecutive Paid Periods	Original Start Date	Client	Device	State	Country	Previous Subscription Name	Previous Subscription Apple ID	Days Before Canceling	Cancellation Reason	Days Canceled	Quantity
+2016-12-25	Renew	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			2	2016-11-25		iPhone	KY	USA						1
+2016-12-25	Subscribe	Invest: buy stocks in great businesses	973162352	Premium_600_365	1147092437	20344069	1 Year		 		 			1	2016-12-25		iPad	NY	USA						1
+2016-12-25	Subscribe	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			1	2016-12-25		iPhone	OR	USA						1
+2016-12-25	Renew	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			2	2016-11-25		iPhone	NJ	USA						1
+2016-12-25	Renew	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			3	2016-10-25		iPhone	NJ	USA						1
+2016-12-25	Renew	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			4	2016-09-25		iPhone	LA	USA						1
+2016-12-25	Renew	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			2	2016-11-25		iPhone	AZ	USA						1
+2016-12-25	Renew	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			4	2016-09-25		iPhone	MI	USA						1
+2016-12-25	Renew	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			2	2016-11-25		iPhone	NY	USA						1
+2016-12-25	Cancel	Invest: buy stocks in great businesses	973162352	Premium_200_30	1147092422	20344069	1 Month		 		 			2	2016-10-25		iPhone	NJ	USA				Canceled		1
