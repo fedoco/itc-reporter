@@ -206,28 +206,28 @@ if __name__ == '__main__':
     args = parse_arguments()
 
     try:
-      validate_arguments(args)
+        validate_arguments(args)
     except ValueError, e:
-      print e
-      exit(-1)
+        print e
+        exit(-1)
 
     password = keychain.find_generic_password(None, args.password_keychain_item, '') if args.password_keychain_item else args.password
 
     credentials = (args.userid, password, str(args.account), args.mode)
 
     try:
-      if args.command == 'getStatus':
-          get_status(credentials, args.service)
-      elif args.command == 'getAccounts':
-          get_accounts(credentials, args.service)
-      elif args.command == 'getVendors':
-          get_vendors(credentials)
-      elif args.command == 'getVendorsAndRegions':
-          get_vendor_and_regions(credentials)
-      elif args.command == 'getSalesReport':
-          get_sales_report(credentials, args.vendor, args.datetype, args.date)
-      elif args.command == 'getFinancialReport':
-          get_financial_report(credentials, args.vendor, args.regioncode, args.fiscalyear, args.fiscalperiod)
+        if args.command == 'getStatus':
+            get_status(credentials, args.service)
+        elif args.command == 'getAccounts':
+            get_accounts(credentials, args.service)
+        elif args.command == 'getVendors':
+            get_vendors(credentials)
+        elif args.command == 'getVendorsAndRegions':
+            get_vendor_and_regions(credentials)
+        elif args.command == 'getSalesReport':
+            get_sales_report(credentials, args.vendor, args.datetype, args.date)
+        elif args.command == 'getFinancialReport':
+            get_financial_report(credentials, args.vendor, args.regioncode, args.fiscalyear, args.fiscalperiod)
     except ValueError, e:
        print e
        exit(-1)
