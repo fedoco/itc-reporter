@@ -70,14 +70,6 @@ class CalendarUnit:
         if self.value == CalendarUnit.Year:
             return 'Yearly'
 
-    def date_parser_format(self):
-        if self.value == CalendarUnit.Day or self.value == CalendarUnit.Week:
-            return '%Y%m%d'
-        if self.value == CalendarUnit.Month:
-            return '%Y%m'
-        if self.value == CalendarUnit.Year:
-            return '%Y'
-
     @classmethod
     def from_adverbial_representation(cls, string):
         if string == 'Daily':
@@ -90,6 +82,14 @@ class CalendarUnit:
             return CalendarUnit.Year
         else:
             raise ValueError("Error: invalid calendar unit.")
+
+    def date_parser_format(self):
+        if self.value == CalendarUnit.Day or self.value == CalendarUnit.Week:
+            return '%Y%m%d'
+        if self.value == CalendarUnit.Month:
+            return '%Y%m'
+        if self.value == CalendarUnit.Year:
+            return '%Y'
 
     def __eq__(self, y):
        return self.value == y.value
