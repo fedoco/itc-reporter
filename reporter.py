@@ -301,17 +301,17 @@ def validate_arguments(args):
            raise ValueError("Error: Fiscal period must be a value between 1 and 12")
 
     if hasattr(args, 'datetype'):
-        date_type = CalendarUnit.fromAdverbialRepresentation(args.datetype)
+        calendar_unit = CalendarUnit.fromAdverbialRepresentation(args.datetype)
 
         format = '%Y%m%d'
         error = "Date must be specified as YYYYMMDD for daily reports"
 
-        if date_type == CalendarUnit.Week:
+        if calendar_unit == CalendarUnit.Week:
             error = "Date must be specified as YYYYMMDD for weekly reports, where the day used is the Sunday that week ends"
-        elif date_type == CalendarUnit.Month:
+        elif calendar_unit == CalendarUnit.Month:
             error = "Date must be specified as YYYYMM for monthly reports"
             format = '%Y%m'
-        elif date_type == CalendarUnit.Year:
+        elif calendar_unit == CalendarUnit.Year:
             error = "Date must be specified as YYYY for yearly reports"
             format = '%Y'
 
