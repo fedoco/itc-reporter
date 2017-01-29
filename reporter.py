@@ -61,17 +61,25 @@ class CalendarUnit:
             return 'Year'
 
     def adverbial_representation(self):
-        if self.value == CalendarUnit.Day:
-            return 'Daily'
-        if self.value == CalendarUnit.Week:
-            return 'Weekly'
-        if self.value == CalendarUnit.Month:
-            return 'Monthly'
-        if self.value == CalendarUnit.Year:
-            return 'Yearly'
+        return self.adverbial_string_for(self.value)
 
     @classmethod
-    def from_adverbial_representation(cls, string):
+    def from_adverbial_representation(string):
+        return self(self.for_adverbial_representation(string))
+
+    @staticmethod
+    def adverbial_string_for(value):
+        if value == CalendarUnit.Day:
+            return 'Daily'
+        if value == CalendarUnit.Week:
+            return 'Weekly'
+        if value == CalendarUnit.Month:
+            return 'Monthly'
+        if value == CalendarUnit.Year:
+            return 'Yearly'
+
+    @staticmethod
+    def for_adverbial_representation(string):
         if string == 'Daily':
             return CalendarUnit.Day
         elif string == 'Weekly':
@@ -83,12 +91,13 @@ class CalendarUnit:
         else:
             raise ValueError("Error: invalid calendar unit.")
 
-    def date_parser_format(self):
-        if self.value == CalendarUnit.Day or self.value == CalendarUnit.Week:
+    @staticmethod
+    def date_parser_format_for(value):
+        if value == CalendarUnit.Day or value == CalendarUnit.Week:
             return '%Y%m%d'
-        if self.value == CalendarUnit.Month:
+        if value == CalendarUnit.Month:
             return '%Y%m'
-        if self.value == CalendarUnit.Year:
+        if value == CalendarUnit.Year:
             return '%Y'
 
     def __eq__(self, y):
@@ -117,8 +126,8 @@ def get_sales_report(credentials, vendor, datetype, date):
 
 def get_sales_reports(credentials, vendor, datetype, startdate_string):
     # FIXME: Move this conversion upwards in the call graph. Requires adapting other functions.
-    calendar_unit = CalendarUnit.from_adverbial_representation(args.datetype)
-    format = CalendarUnit(calendar_unit).date_parser_format()
+    calendar_unit = CalendarUnit.for_adverbial_representation(args.datetype)
+    format = CalendarUnit.date_parser_format_for(calendar_unit)
 
     start_date = datetime.datetime.strptime(startdate_string, format)
 
@@ -155,7 +164,7 @@ def date_range(start=None, end=None, delta_days=1):
         yield start + timedelta(days=i)
 
 def date_strings_for_range(start=None, end=None, step=CalendarUnit.Day):
-    format = CalendarUnit(step).date_parser_format()
+    format = CalendarUnit.date_parser_format_for(step)
 
     if step == CalendarUnit.Day or step == CalendarUnit.Week:
         delta_days = 1
@@ -321,7 +330,7 @@ def validate_arguments(args):
            raise ValueError("Error: Fiscal period must be a value between 1 and 12")
 
     if hasattr(args, 'datetype'):
-        calendar_unit = CalendarUnit.from_adverbial_representation(args.datetype)
+        calendar_unit = CalendarUnit.for_adverbial_representation(args.datetype)
 
         if calendar_unit == CalendarUnit.Day:
             error = "Date must be specified as YYYYMMDD for daily reports"
@@ -334,7 +343,7 @@ def validate_arguments(args):
         else:
             raise ValueError("Unsupported value for calendar unit.")
 
-        format = CalendarUnit(calendar_unit).date_parser_format()
+        format = CalendarUnit.date_parser_format_for(calendar_unit)
 
         try:
             datetime.datetime.strptime(args.date, format)
