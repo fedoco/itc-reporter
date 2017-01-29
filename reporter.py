@@ -52,13 +52,17 @@ class CalendarUnit:
         self.value = Type
 
     def __str__(self):
-        if self.value == CalendarUnit.Day:
+        return self.name_string_for(self.value)
+
+    @staticmethod
+    def name_string_for(value):
+        if value == CalendarUnit.Day:
             return 'Day'
-        if self.value == CalendarUnit.Week:
+        if value == CalendarUnit.Week:
             return 'Week'
-        if self.value == CalendarUnit.Month:
+        if value == CalendarUnit.Month:
             return 'Month'
-        if self.value == CalendarUnit.Year:
+        if value == CalendarUnit.Year:
             return 'Year'
 
     def adverbial_representation(self):
