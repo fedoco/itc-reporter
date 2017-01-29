@@ -70,6 +70,14 @@ class CalendarUnit:
         if self.value == CalendarUnit.Year:
             return 'Yearly'
 
+    def dateParserFormat():
+        if self.value == CalendarUnit.Day or self.value == CalendarUnit.Week:
+            return '%Y%m%d'
+        if self.value == CalendarUnit.Month:
+            return '%Y%m'
+        if self.value == CalendarUnit.Year:
+            return '%Y'
+
     @classmethod
     def fromAdverbialRepresentation(cls, string):
         if string == 'Daily':
@@ -109,13 +117,6 @@ def get_sales_reports(credentials, vendor, datetype, startdate_string):
     # FIXME: Move this conversion upwards in the call graph. Requires adapting other functions.
     calendar_unit = CalendarUnit.fromAdverbialRepresentation(args.datetype)
 
-    format = '%Y%m%d'
-
-    if calendar_unit == CalendarUnit.Month:
-        format = '%Y%m'
-    elif calendar_unit == CalendarUnit.Year:
-        format = '%Y'
-
     start_date = datetime.datetime.strptime(startdate_string, format)
 
     if calendar_unit == CalendarUnit.Week:
@@ -151,18 +152,20 @@ def date_range(start=None, end=None, delta_days=1):
         yield start + timedelta(days=i)
 
 def date_strings_for_range(start=None, end=None, step=CalendarUnit.Day):
-    if calendar_unit == CalendarUnit.Day or calendar_unit == CalendarUnit.Week:
+    format = step.dateParserFormat()
+
+    if step == CalendarUnit.Day or step == CalendarUnit.Week:
         delta_days = 1
 
-        if calendar_unit == CalendarUnit.Week:
+        if step == CalendarUnit.Week:
             delta_days = 7
 
         for date in date_range(start=start, end=end, delta_days=delta_days):
             date_string = date.strftime(format)
             yield date_string
-    elif calendar_unit == CalendarUnit.Month:
+    elif step == CalendarUnit.Month:
         pass
-    elif calendar_unit == CalendarUnit.Year:
+    elif step == CalendarUnit.Year:
         pass
 
 # Originally from
@@ -318,17 +321,15 @@ def validate_arguments(args):
         # FIXME: Handle invalid values for `args.datetype`.
         calendar_unit = CalendarUnit.fromAdverbialRepresentation(args.datetype)
 
-        format = '%Y%m%d'
+        format = calendar_unit.dateParserFormat()
         error = "Date must be specified as YYYYMMDD for daily reports"
 
         if calendar_unit == CalendarUnit.Week:
             error = "Date must be specified as YYYYMMDD for weekly reports, where the day used is the Sunday that week ends"
         elif calendar_unit == CalendarUnit.Month:
             error = "Date must be specified as YYYYMM for monthly reports"
-            format = '%Y%m'
         elif calendar_unit == CalendarUnit.Year:
             error = "Date must be specified as YYYY for yearly reports"
-            format = '%Y'
 
         try:
             datetime.datetime.strptime(args.date, format)
