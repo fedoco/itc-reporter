@@ -31,6 +31,7 @@
 # THE SOFTWARE.
 
 import argparse, urllib, urllib2, json, zlib, datetime, keychain
+from datetime import timedelta
 
 VERSION = '1.0'
 ENDPOINT_SALES = 'https://reportingitc-reporter.apple.com/reportservice/sales/v1'
@@ -56,6 +57,32 @@ def get_sales_report(credentials, vendor, datetype, date):
     command = 'Sales.getReport, {0},Sales,Summary,{1},{2}'.format(vendor, datetype, date)
     output_result(post_request(ENDPOINT_SALES, credentials, command))
 
+def get_sales_reports(credentials, vendor, datetype, startdate_string):
+    format = '%Y%m%d'
+    delta_days = 1
+    if args.datetype == 'Weekly':
+        delta_days = 7
+    elif args.datetype == 'Monthly':
+        format = '%Y%m'
+    elif args.datetype == 'Yearly':
+        format = '%Y'
+
+    start_date = datetime.datetime.strptime(startdate_string, format)
+
+    if args.datetype == 'Weekly':
+        start_date = closest_future_sunday(start_date)
+
+    # FIXME: “Report is not available yet. Daily reports for the Americas are available by 5 am Pacific Time; Japan, Australia, and New Zealand by 5 am Japan Standard Time; and 5 am Central European Time for all other territories.”
+    end_date = datetime.datetime.now()
+
+    if args.datetype == 'Weekly':
+        end_date = closest_past_sunday(end_date)
+
+    for date in datetime_range(start=start_date, end=end_date, delta_days=delta_days):
+        date_string = date.strftime(format)
+        command = 'Sales.getReport, {0},Sales,Summary,{1},{2}'.format(vendor, datetype, date_string)
+        output_result(post_request(ENDPOINT_SALES, credentials, command))
+
 def get_financial_report(credentials, vendor, regioncode, fiscalyear, fiscalperiod):
     command = 'Finance.getReport, {0},{1},Financial,{2},{3}'.format(vendor, regioncode, fiscalyear, fiscalperiod)
     output_result(post_request(ENDPOINT_FINANCE, credentials, command))
@@ -63,6 +90,33 @@ def get_financial_report(credentials, vendor, regioncode, fiscalyear, fiscalperi
 def get_vendor_and_regions(credentials):
     command = 'Finance.getVendorsAndRegions'
     output_result(post_request(ENDPOINT_FINANCE, credentials, command))
+
+# helpers
+
+# I really don’t like all those magic numbers in the date calculations.
+# You never want to do date calculations yourself and should always use a library!
+
+# Originally from
+# http://stackoverflow.com/a/25166764/152827
+def datetime_range(start=None, end=None, delta_days=1):
+    span = end - start
+    for i in xrange(0, span.days + 1, delta_days):
+        yield start + timedelta(days=i)
+
+# Originally from
+# http://stackoverflow.com/a/6558571/152827
+def closest_weekday(d, weekday=0, future=True):
+    # weekday: 0 = Monday, 1=Tuesday, 2=Wednesday...
+    days_ahead = weekday - d.weekday()
+    if future and days_ahead < 0: # Target day already happened this week and is not today.
+        days_ahead += 7
+    return d + datetime.timedelta(days_ahead)
+
+def closest_future_sunday(d):
+    return closest_weekday(d, weekday=6, future=True)
+
+def closest_past_sunday(d):
+    return closest_weekday(d, weekday=6, future=False)
 
 # HTTP request
 
@@ -153,18 +207,23 @@ def parse_arguments():
 
     parser_3 = subparsers.add_parser('getVendors', help="fetch a list of vendors accessible to the Apple ID given in -u")
 
-    parser_4 = subparsers.add_parser('getSalesReport', help="download a sales report file for a specific date range")
+    parser_4 = subparsers.add_parser('getSalesReport', help="download a sales report file for a specific date or calendar unit")
     parser_4.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_4.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
     parser_4.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
 
-    parser_5 = subparsers.add_parser('getFinancialReport', help="download a financial report file for a specific region and fiscal period")
+    parser_5 = subparsers.add_parser('getSalesReports', help="download sales report files for a specific date range")
     parser_5.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
-    parser_5.add_argument('regioncode', help="two-character code of country of the report to download (for a list of country codes by vendor number, use the 'getVendorsAndRegions' command)")
-    parser_5.add_argument('fiscalyear', help="four-digit year of the report to download (year is specific to Apple’s fiscal calendar)") 
-    parser_5.add_argument('fiscalperiod', help="period in fiscal year for the report to download (1-12; period is specific to Apple’s fiscal calendar)")
+    parser_5.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="calendar unit covered by the report")
+    parser_5.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
 
-    parser_6 = subparsers.add_parser('getVendorsAndRegions', help="fetch a list of financial reports you can download by vendor number and region")
+    parser_6 = subparsers.add_parser('getFinancialReport', help="download a financial report file for a specific region and fiscal period")
+    parser_6.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_6.add_argument('regioncode', help="two-character code of country of the report to download (for a list of country codes by vendor number, use the 'getVendorsAndRegions' command)")
+    parser_6.add_argument('fiscalyear', help="four-digit year of the report to download (year is specific to Apple’s fiscal calendar)") 
+    parser_6.add_argument('fiscalperiod', help="period in fiscal year for the report to download (1-12; period is specific to Apple’s fiscal calendar)")
+
+    parser_7 = subparsers.add_parser('getVendorsAndRegions', help="fetch a list of financial reports you can download by vendor number and region")
 
     return parser.parse_args()
 
@@ -235,6 +294,8 @@ if __name__ == '__main__':
             get_vendor_and_regions(credentials)
         elif args.command == 'getSalesReport':
             get_sales_report(credentials, args.vendor, args.datetype, args.date)
+        elif args.command == 'getSalesReports':
+            get_sales_reports(credentials, args.vendor, args.datetype, args.date)
         elif args.command == 'getFinancialReport':
             get_financial_report(credentials, args.vendor, args.regioncode, args.fiscalyear, args.fiscalperiod)
     except ValueError, e:
