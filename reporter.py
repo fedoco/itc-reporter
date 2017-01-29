@@ -168,9 +168,9 @@ def date_strings_for_range(start=None, end=None, step=CalendarUnit.Day):
     format = CalendarUnit.date_parser_format_for(step)
 
     if step == CalendarUnit.Day or step == CalendarUnit.Week:
-        delta_days = 1
-
-        if step == CalendarUnit.Week:
+        if step == CalendarUnit.Day:
+            delta_days = 1
+        elif step == CalendarUnit.Week:
             delta_days = 7
 
         for date in date_range(start=start, end=end, delta_days=delta_days):
