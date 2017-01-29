@@ -315,6 +315,7 @@ def validate_arguments(args):
            raise ValueError("Error: Fiscal period must be a value between 1 and 12")
 
     if hasattr(args, 'datetype'):
+        # FIXME: Handle invalid values for `args.datetype`.
         calendar_unit = CalendarUnit.fromAdverbialRepresentation(args.datetype)
 
         format = '%Y%m%d'
