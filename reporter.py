@@ -60,7 +60,7 @@ class CalendarUnit:
         if self.value == CalendarUnit.Year:
             return 'Year'
 
-    def adverbialRepresentation():
+    def adverbialRepresentation(self):
         if self.value == CalendarUnit.Day:
             return 'Daily'
         if self.value == CalendarUnit.Week:
@@ -70,7 +70,7 @@ class CalendarUnit:
         if self.value == CalendarUnit.Year:
             return 'Yearly'
 
-    def dateParserFormat():
+    def dateParserFormat(self):
         if self.value == CalendarUnit.Day or self.value == CalendarUnit.Week:
             return '%Y%m%d'
         if self.value == CalendarUnit.Month:
@@ -82,12 +82,14 @@ class CalendarUnit:
     def fromAdverbialRepresentation(cls, string):
         if string == 'Daily':
             return CalendarUnit.Day
-        if string == 'Weekly':
+        elif string == 'Weekly':
             return CalendarUnit.Week
-        if string == 'Monthly':
+        elif string == 'Monthly':
             return CalendarUnit.Month
-        if string == 'Yearly':
+        elif string == 'Yearly':
             return CalendarUnit.Year
+        else:
+            raise ValueError("Error: invalid calendar unit.")
 
     def __eq__(self, y):
        return self.value == y.value
@@ -318,18 +320,20 @@ def validate_arguments(args):
            raise ValueError("Error: Fiscal period must be a value between 1 and 12")
 
     if hasattr(args, 'datetype'):
-        # FIXME: Handle invalid values for `args.datetype`.
         calendar_unit = CalendarUnit.fromAdverbialRepresentation(args.datetype)
 
-        format = calendar_unit.dateParserFormat()
-        error = "Date must be specified as YYYYMMDD for daily reports"
-
-        if calendar_unit == CalendarUnit.Week:
+        if calendar_unit == CalendarUnit.Day:
+            error = "Date must be specified as YYYYMMDD for daily reports"
+        elif calendar_unit == CalendarUnit.Week:
             error = "Date must be specified as YYYYMMDD for weekly reports, where the day used is the Sunday that week ends"
         elif calendar_unit == CalendarUnit.Month:
             error = "Date must be specified as YYYYMM for monthly reports"
         elif calendar_unit == CalendarUnit.Year:
             error = "Date must be specified as YYYY for yearly reports"
+        else:
+            raise ValueError("Unsupported value for calendar unit.")
+
+        format = calendar_unit.dateParserFormat()
 
         try:
             datetime.datetime.strptime(args.date, format)
