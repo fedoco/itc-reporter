@@ -104,15 +104,24 @@ def output_result(result):
     """Output (and when necessary unzip) the result of the request to the screen or into a report file"""
 
     content, header = result
+    decompress = True
 
     # unpack content into the final report file if it is gzip compressed.
     if header.gettype() == 'application/a-gzip':
-        content = zlib.decompress(content, 15 + 32)
-        filename = header.dict['filename'][:-3] or 'report.txt'
+        if decompress:
+            content = zlib.decompress(content, 15 + 32)
+            filename = header.dict['filename'][:-3] or 'report.txt'
+        else:
+            filename = header.dict['filename']
+
         file = open(filename, 'w')
         file.write(content)
         file.close()
-        print header.dict['downloadmsg'].replace('.txt.gz', '.txt')
+
+        if decompress:
+            print header.dict['downloadmsg'].replace('.txt.gz', '.txt')
+        else:
+            print header.dict['downloadmsg']
     else:
         print content
 
