@@ -151,6 +151,17 @@ def get_sales_reports_for_calendar_unit(credentials, vendor, calendar_unit, star
     for date_string in date_strings_for_range(start=start_date, end=end_date, step=calendar_unit):
         get_sales_report(credentials, vendor, datetype, date_string)
 
+def get_sales_reports_for_all_calendar_units(credentials, vendor, startdate_string):
+    calendar_units = [CalendarUnit.Day, CalendarUnit.Week, CalendarUnit.Month, CalendarUnit.Year]
+
+    format = CalendarUnit.date_parser_format_for(CalendarUnit.Day)
+    start_date = datetime.datetime.strptime(startdate_string, format)
+
+    end_date = datetime.datetime.now()
+
+    for calendar_unit in calendar_units:
+        get_sales_reports_for_calendar_unit(credentials, vendor, calendar_unit, start_date, end_date)
+
 def get_financial_report(credentials, vendor, regioncode, fiscalyear, fiscalperiod):
     command = 'Finance.getReport, {0},{1},Financial,{2},{3}'.format(vendor, regioncode, fiscalyear, fiscalperiod)
     output_result(post_request(ENDPOINT_FINANCE, credentials, command))
@@ -325,13 +336,17 @@ def parse_arguments():
     parser_5.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="calendar unit covered by the report")
     parser_5.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
 
-    parser_6 = subparsers.add_parser('getFinancialReport', help="download a financial report file for a specific region and fiscal period")
+    parser_6 = subparsers.add_parser('getSalesReportsForAllCalendarUnits', help="download sales report files for a specific date range")
     parser_6.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
-    parser_6.add_argument('regioncode', help="two-character code of country of the report to download (for a list of country codes by vendor number, use the 'getVendorsAndRegions' command)")
-    parser_6.add_argument('fiscalyear', help="four-digit year of the report to download (year is specific to Apple’s fiscal calendar)") 
-    parser_6.add_argument('fiscalperiod', help="period in fiscal year for the report to download (1-12; period is specific to Apple’s fiscal calendar)")
+    parser_6.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
 
-    parser_7 = subparsers.add_parser('getVendorsAndRegions', help="fetch a list of financial reports you can download by vendor number and region")
+    parser_7 = subparsers.add_parser('getFinancialReport', help="download a financial report file for a specific region and fiscal period")
+    parser_7.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_7.add_argument('regioncode', help="two-character code of country of the report to download (for a list of country codes by vendor number, use the 'getVendorsAndRegions' command)")
+    parser_7.add_argument('fiscalyear', help="four-digit year of the report to download (year is specific to Apple’s fiscal calendar)") 
+    parser_7.add_argument('fiscalperiod', help="period in fiscal year for the report to download (1-12; period is specific to Apple’s fiscal calendar)")
+
+    parser_8 = subparsers.add_parser('getVendorsAndRegions', help="fetch a list of financial reports you can download by vendor number and region")
 
     return parser.parse_args()
 
@@ -409,6 +424,8 @@ if __name__ == '__main__':
             get_sales_report(credentials, args.vendor, args.datetype, args.date)
         elif args.command == 'getSalesReports':
             get_sales_reports(credentials, args.vendor, args.datetype, args.date)
+        elif args.command == 'getSalesReportsForAllCalendarUnits':
+            get_sales_reports_for_all_calendar_units(credentials, args.vendor, args.date)
         elif args.command == 'getFinancialReport':
             get_financial_report(credentials, args.vendor, args.regioncode, args.fiscalyear, args.fiscalperiod)
     except ValueError, e:
