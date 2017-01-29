@@ -37,6 +37,54 @@ VERSION = '1.0'
 ENDPOINT_SALES = 'https://reportingitc-reporter.apple.com/reportservice/sales/v1'
 ENDPOINT_FINANCE = 'https://reportingitc-reporter.apple.com/reportservice/finance/v1'
 
+
+# calendar units
+
+# Originally from
+# http://stackoverflow.com/questions/702834/whats-the-common-practice-for-enums-in-python?noredirect=1&lq=1
+# Could be improved upon by using Python enums
+# http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python#1695250
+class CalendarUnit:
+    Day, Week, Month, Year = range(4)
+
+    def __init__(self, Type):
+        self.value = Type
+
+    def __str__(self):
+        if self.value == CalendarUnit.Day:
+            return 'Day'
+        if self.value == CalendarUnit.Week:
+            return 'Week'
+        if self.value == CalendarUnit.Month:
+            return 'Month'
+        if self.value == CalendarUnit.Year:
+            return 'Year'
+
+    def adverbialRepresentation():
+        if self.value == CalendarUnit.Day:
+            return 'Daily'
+        if self.value == CalendarUnit.Week:
+            return 'Weekly'
+        if self.value == CalendarUnit.Month:
+            return 'Monthly'
+        if self.value == CalendarUnit.Year:
+            return 'Yearly'
+
+    @classmethod
+    def fromAdverbialRepresentation(cls, string):
+        if string == 'Daily':
+            return CalendarUnit.Day
+        if string == 'Weekly':
+            return CalendarUnit.Week
+        if string == 'Monthly':
+            return CalendarUnit.Month
+        if string == 'Yearly':
+            return CalendarUnit.Year
+
+    def __eq__(self, y):
+       return self.value == y.value
+
+
 # queries
 
 def get_vendors(credentials):
@@ -253,16 +301,20 @@ def validate_arguments(args):
            raise ValueError("Error: Fiscal period must be a value between 1 and 12")
 
     if hasattr(args, 'datetype'):
+        date_type = CalendarUnit.fromAdverbialRepresentation(args.datetype)
+
         format = '%Y%m%d'
         error = "Date must be specified as YYYYMMDD for daily reports"
-        if args.datetype == 'Weekly':
+
+        if date_type == CalendarUnit.Week:
             error = "Date must be specified as YYYYMMDD for weekly reports, where the day used is the Sunday that week ends"
-        if args.datetype == 'Monthly':
+        elif date_type == CalendarUnit.Month:
             error = "Date must be specified as YYYYMM for monthly reports"
             format = '%Y%m'
-        if args.datetype == 'Yearly':
+        elif date_type == CalendarUnit.Year:
             error = "Date must be specified as YYYY for yearly reports"
             format = '%Y'
+
         try:
             datetime.datetime.strptime(args.date, format)
         except:
