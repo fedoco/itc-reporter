@@ -136,11 +136,14 @@ def get_sales_reports(credentials, vendor, datetype, startdate_string):
 
     start_date = datetime.datetime.strptime(startdate_string, format)
 
-    if calendar_unit == CalendarUnit.Week:
-        start_date = closest_future_sunday(start_date)
-
     # FIXME: “Report is not available yet. Daily reports for the Americas are available by 5 am Pacific Time; Japan, Australia, and New Zealand by 5 am Japan Standard Time; and 5 am Central European Time for all other territories.”
     end_date = datetime.datetime.now()
+
+    get_sales_reports_for_calendar_unit(credentials, vendor, calendar_unit, start_date, end_date)
+
+def get_sales_reports_for_calendar_unit(credentials, vendor, calendar_unit, start_date, end_date):
+    if calendar_unit == CalendarUnit.Week:
+        start_date = closest_future_sunday(start_date)
 
     if calendar_unit == CalendarUnit.Week:
         end_date = closest_past_sunday(end_date)
