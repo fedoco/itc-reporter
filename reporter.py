@@ -106,30 +106,29 @@ def get_sales_report(credentials, vendor, datetype, date):
     output_result(post_request(ENDPOINT_SALES, credentials, command))
 
 def get_sales_reports(credentials, vendor, datetype, startdate_string):
+    # FIXME: Move this conversion upwards in the call graph. Requires adapting other functions.
+    calendar_unit = CalendarUnit.fromAdverbialRepresentation(args.datetype)
+
     format = '%Y%m%d'
-    delta_days = 1
-    if args.datetype == 'Weekly':
-        delta_days = 7
-    elif args.datetype == 'Monthly':
+
+    if calendar_unit == CalendarUnit.Month:
         format = '%Y%m'
-    elif args.datetype == 'Yearly':
+    elif calendar_unit == CalendarUnit.Year:
         format = '%Y'
 
     start_date = datetime.datetime.strptime(startdate_string, format)
 
-    if args.datetype == 'Weekly':
+    if calendar_unit == CalendarUnit.Week:
         start_date = closest_future_sunday(start_date)
 
     # FIXME: “Report is not available yet. Daily reports for the Americas are available by 5 am Pacific Time; Japan, Australia, and New Zealand by 5 am Japan Standard Time; and 5 am Central European Time for all other territories.”
     end_date = datetime.datetime.now()
 
-    if args.datetype == 'Weekly':
+    if calendar_unit == CalendarUnit.Week:
         end_date = closest_past_sunday(end_date)
 
-    for date in datetime_range(start=start_date, end=end_date, delta_days=delta_days):
-        date_string = date.strftime(format)
-        command = 'Sales.getReport, {0},Sales,Summary,{1},{2}'.format(vendor, datetype, date_string)
-        output_result(post_request(ENDPOINT_SALES, credentials, command))
+    for date_string in date_strings_for_range(start=start_date, end=end_date, step=calendar_unit):
+        get_sales_report(credentials, vendor, datetype, date_string)
 
 def get_financial_report(credentials, vendor, regioncode, fiscalyear, fiscalperiod):
     command = 'Finance.getReport, {0},{1},Financial,{2},{3}'.format(vendor, regioncode, fiscalyear, fiscalperiod)
@@ -146,10 +145,25 @@ def get_vendor_and_regions(credentials):
 
 # Originally from
 # http://stackoverflow.com/a/25166764/152827
-def datetime_range(start=None, end=None, delta_days=1):
+def date_range(start=None, end=None, delta_days=1):
     span = end - start
     for i in xrange(0, span.days + 1, delta_days):
         yield start + timedelta(days=i)
+
+def date_strings_for_range(start=None, end=None, step=CalendarUnit.Day):
+    if calendar_unit == CalendarUnit.Day or calendar_unit == CalendarUnit.Week:
+        delta_days = 1
+
+        if calendar_unit == CalendarUnit.Week:
+            delta_days = 7
+
+        for date in date_range(start=start, end=end, delta_days=delta_days):
+            date_string = date.strftime(format)
+            yield date_string
+    elif calendar_unit == CalendarUnit.Month:
+        pass
+    elif calendar_unit == CalendarUnit.Year:
+        pass
 
 # Originally from
 # http://stackoverflow.com/a/6558571/152827
