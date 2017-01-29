@@ -40,7 +40,7 @@ ENDPOINT_FINANCE = 'https://reportingitc-reporter.apple.com/reportservice/financ
 
 # calendar units
 
-# Originally from
+# Originally based on
 # http://stackoverflow.com/questions/702834/whats-the-common-practice-for-enums-in-python?noredirect=1&lq=1
 # Could be improved upon by using Python enums
 # http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python#1695250
@@ -118,6 +118,7 @@ def get_sales_report(credentials, vendor, datetype, date):
 def get_sales_reports(credentials, vendor, datetype, startdate_string):
     # FIXME: Move this conversion upwards in the call graph. Requires adapting other functions.
     calendar_unit = CalendarUnit.from_adverbial_representation(args.datetype)
+    format = CalendarUnit(calendar_unit).date_parser_format()
 
     start_date = datetime.datetime.strptime(startdate_string, format)
 
@@ -154,7 +155,7 @@ def date_range(start=None, end=None, delta_days=1):
         yield start + timedelta(days=i)
 
 def date_strings_for_range(start=None, end=None, step=CalendarUnit.Day):
-    format = step.date_parser_format()
+    format = CalendarUnit(step).date_parser_format()
 
     if step == CalendarUnit.Day or step == CalendarUnit.Week:
         delta_days = 1
@@ -333,7 +334,7 @@ def validate_arguments(args):
         else:
             raise ValueError("Unsupported value for calendar unit.")
 
-        format = calendar_unit.date_parser_format()
+        format = CalendarUnit(calendar_unit).date_parser_format()
 
         try:
             datetime.datetime.strptime(args.date, format)
