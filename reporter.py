@@ -30,7 +30,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import argparse, urllib, urllib2, json, zlib, datetime, keychain
+import argparse, urllib, urllib2, json, zlib, calendar, datetime, keychain
+
 from datetime import timedelta
 
 VERSION = '1.0'
@@ -176,9 +177,13 @@ def date_strings_for_range(start=None, end=None, step=CalendarUnit.Day):
             date_string = date.strftime(format)
             yield date_string
     elif step == CalendarUnit.Month:
-        pass
+        for date in months_range(start=start, end=end):
+            date_string = date.strftime(format)
+            yield date_string
     elif step == CalendarUnit.Year:
-        pass
+        for date in years_range(start=start, end=end):
+            date_string = date.strftime(format)
+            yield date_string
 
 # Originally from
 # http://stackoverflow.com/a/6558571/152827
@@ -194,6 +199,25 @@ def closest_future_sunday(d):
 
 def closest_past_sunday(d):
     return closest_weekday(d, weekday=6, future=False)
+
+# Originally from
+# http://stackoverflow.com/a/5735013/152827
+def months_range(start=None, end=None):
+    date = start
+    while date <= end:
+        yield date
+        days_in_month = calendar.monthrange(date.year, date.month)[1]
+        date += datetime.timedelta(days_in_month)
+
+def years_range(start=None, end=None):
+    date = start
+    while date <= end:
+        yield date
+        if (calendar.isleap(date.year)):
+            days_in_year = 366
+        else:
+            days_in_year = 365 
+        date += datetime.timedelta(days_in_year)
 
 # HTTP request
 
