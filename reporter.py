@@ -8,7 +8,7 @@
 # It is written in pure Python and doesn’t need a Java runtime installation.
 # Opposed to Apple’s tool, it can fetch iTunes Connect login credentials from the
 # macOS Keychain in order to tighten security a bit. Also, it goes the extra mile
-# and unzips the downloaded reports.
+# and unzips the downloaded reports if possible.
 #
 # Copyright (c) 2016 fedoco <fedoco@users.noreply.github.com>
 #
@@ -100,19 +100,23 @@ def post_request(endpoint, credentials, command):
         else:
             raise ValueError("HTTP Error %s. Did you choose reasonable query arguments?" % str(e.code))
 
-def output_result(result):
+def output_result(result, unzip = True):
     """Output (and when necessary unzip) the result of the request to the screen or into a report file"""
 
     content, header = result
 
     # unpack content into the final report file if it is gzip compressed.
     if header.gettype() == 'application/a-gzip':
-        content = zlib.decompress(content, 15 + 32)
-        filename = header.dict['filename'][:-3] or 'report.txt'
+        msg = header.dict['downloadmsg']
+        filename = header.dict['filename'] or 'report.txt.gz'
+        if unzip:
+            msg = msg.replace('.txt.gz', '.txt')
+            filename = filename[:-3]
+            content = zlib.decompress(content, 15 + 32)
         file = open(filename, 'w')
         file.write(content)
         file.close()
-        print header.dict['downloadmsg'].replace('.txt.gz', '.txt')
+        print msg
     else:
         print content
 
