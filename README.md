@@ -24,7 +24,7 @@ The argument names and values of this script have mostly been chosen to be consi
 ```text
 usage: reporter.py [-h] [-a ACCOUNT] [-m {Normal,Robot.XML}] -u USERID
                    (-p PASSWORD_KEYCHAIN_ITEM | -P PASSWORD)
-                   {getStatus,getAccounts,getVendors,getSalesReport,getFinancialReport,getVendorsAndRegions}
+                   {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport}
                    ...
 
 Reporting tool for querying Sales- and Financial Reports from iTunes Connect
@@ -52,18 +52,34 @@ commands:
   Specify the task you want to be carried out (use -h after a command's name
   to get additional help for that command)
 
-  {getStatus,getAccounts,getVendors,getSalesReport,getFinancialReport,getVendorsAndRegions}
+  {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport}
     getStatus           check if iTunes Connect is available for queries
     getAccounts         fetch a list of accounts accessible to the Apple ID
                         given in -u
     getVendors          fetch a list of vendors accessible to the Apple ID
                         given in -u
-    getSalesReport      download a sales report file for a specific date range
-    getFinancialReport  download a financial report file for a specific region
-                        and fiscal period
     getVendorsAndRegions
                         fetch a list of financial reports you can download by
                         vendor number and region
+    getFinancialReport  download a financial report file for a specific region
+                        and fiscal period
+    getSalesReport      download a summary sales report file for a specific
+                        date range
+    getSubscriptionReport
+                        download a subscription report file for a specific day
+    getSubscriptionEventReport
+                        download an aggregated subscriber activity report file
+                        for a specific day
+    getSubscriberReport
+                        download a transaction-level subscriber activity
+                        report file for a specific day
+    getNewsstandReport  download a magazines & newspapers report file for a
+                        specific date range
+    getOptInReport      download contact information for customers who opt in
+                        to share their contact information with you
+
+For a detailed description of report types, see
+http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
 ```
 
 ### Usage examples
@@ -112,7 +128,7 @@ These examples should do for a quick introduction. Don't forget to read Apple's 
 ```
 
 ## What's still missing
-There is currently no support for retrieving Newsstand-related reports, but I wonder if anybody using this script would really need it.
+There seem to be [additional report types](http://help.apple.com/itc/contentreporterguide/en.lproj/static.html) available for retrieving Apple Music related data, but I wonder if anybody using this script would really need it.
 
 ## Obligatory disclaimer
 
