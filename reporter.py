@@ -89,10 +89,12 @@ def get_opt_in_report(credentials, vendor, date):
 def build_json_request_string(credentials, query):
     """Build a JSON string from the urlquoted credentials and the actual query input"""
 
-    userid, password, account, mode = credentials
+    userid, password, accessToken, account, mode = credentials
 
-    request_data = dict(userid=userid, password=password, version=VERSION, mode=mode, queryInput=query)
+    request_data = dict(userid=userid, version=VERSION, mode=mode, queryInput=query)
     if account: request_data.update(account=account) # empty account info would result in error 404 
+    if password: request_data.update(password=password)
+    if accessToken: request_data.update(accesstoken=accessToken)
 
     request = {k: urllib.quote_plus(v) for k, v in request_data.items()}
     request = json.dumps(request)
@@ -157,6 +159,8 @@ def parse_arguments():
     mutex_group = required_args.add_mutually_exclusive_group(required=True)
     mutex_group.add_argument('-p', '--password-keychain-item', help="name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)")
     mutex_group.add_argument('-P', '--password', help="Apple ID password (cannot be used together with -p)")
+    mutex_group.add_argument('-T','--access-token', help='Access token (can be generated in iTunes Connect - Sales & Trends - Reports - About Reports)')
+    mutex_group.add_argument('-t','--access-token-keychain-item', help='name of the macOS Keychain item that holds the access token')
     
     # commands
     subparsers = parser.add_subparsers(dest='command', title='commands', description="Specify the task you want to be carried out (use -h after a command's name to get additional help for that command)")
@@ -213,6 +217,12 @@ def validate_arguments(args):
        except:
            raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.password_keychain_item))
 
+    if args.access_token_keychain_item:
+       try:
+           keychain.find_generic_password(None, args.access_token_keychain_item, '')
+       except:
+           raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.access_token_keychain_item))
+
     if not args.account and (args.command == 'getVendorsAndRegions' or args.command == 'getVendors' or args.command == 'getFinancialReport'):
         raise ValueError("Error: Argument -a/--account is needed for command '%s'" % args.command)
 
@@ -257,8 +267,9 @@ if __name__ == '__main__':
       exit(-1)
 
     password = keychain.find_generic_password(None, args.password_keychain_item, '') if args.password_keychain_item else args.password
+    access_token = keychain.find_generic_password(None, args.access_token_keychain_item, '') if args.access_token_keychain_item else args.access_token
 
-    credentials = (args.userid, password, str(args.account), args.mode)
+    credentials = (args.userid, password, access_token, str(args.account), args.mode)
 
     try:
       if args.command == 'getStatus':
