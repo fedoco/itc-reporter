@@ -32,7 +32,7 @@
 
 import argparse, urllib, urllib2, json, zlib, datetime, keychain
 
-VERSION = '1.0'
+VERSION = '2.1'
 ENDPOINT_SALES = 'https://reportingitc-reporter.apple.com/reportservice/sales/v1'
 ENDPOINT_FINANCE = 'https://reportingitc-reporter.apple.com/reportservice/finance/v1'
 
@@ -157,10 +157,10 @@ def parse_arguments():
     required_args = parser.add_argument_group("required arguments")
     required_args.add_argument('-u', '--userid', required=True, help="Apple ID for use with iTunes Connect")
     mutex_group = required_args.add_mutually_exclusive_group(required=True)
-    mutex_group.add_argument('-p', '--password-keychain-item', help="name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)")
-    mutex_group.add_argument('-P', '--password', help="Apple ID password (cannot be used together with -p)")
-    mutex_group.add_argument('-T','--access-token', help='Access token (can be generated in iTunes Connect - Sales & Trends - Reports - About Reports)')
     mutex_group.add_argument('-t','--access-token-keychain-item', help='name of the macOS Keychain item that holds the access token')
+    mutex_group.add_argument('-T','--access-token', help='Access token (can be generated in iTunes Connect - Sales & Trends - Reports - About Reports)')
+    mutex_group.add_argument('-p', '--password-keychain-item', help="DEPRECATED: name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)")
+    mutex_group.add_argument('-P', '--password', help="DEPRECATED: Apple ID password (cannot be used together with -p)")
     
     # commands
     subparsers = parser.add_subparsers(dest='command', title='commands', description="Specify the task you want to be carried out (use -h after a command's name to get additional help for that command)")
