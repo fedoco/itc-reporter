@@ -47,6 +47,12 @@ required arguments:
                         ID password (cannot be used together with -P)
   -P PASSWORD, --password PASSWORD
                         Apple ID password (cannot be used together with -p)
+  -T ACCESS_TOKEN, --access-token ACCESS_TOKEN
+                        Access token (can be generated in iTunes Connect -
+                        Sales & Trends - Reports - About Reports)
+  -t ACCESS_TOKEN_KEYCHAIN_ITEM, --access-token-keychain-item ACCESS_TOKEN_KEYCHAIN_ITEM
+                        name of the macOS Keychain item that holds the access
+                        token
 
 commands:
   Specify the task you want to be carried out (use -h after a command's name
