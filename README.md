@@ -23,7 +23,7 @@ There really is no compelling reason to employ a Java tool with its somewhat hea
 The argument names and values of this script have mostly been chosen to be consistent with [Apple's documentation for Reporter](https://help.apple.com/itc/appsreporterguide/). To get a quick overview, here is the output of `./reporter.py -h`: 
 ```text
 usage: reporter.py [-h] [-a ACCOUNT] [-m {Normal,Robot.XML}] -u USERID
-                   (-p PASSWORD_KEYCHAIN_ITEM | -P PASSWORD | -T ACCESS_TOKEN | -t ACCESS_TOKEN_KEYCHAIN_ITEM)
+                   (-T ACCESS_TOKEN | -t ACCESS_TOKEN_KEYCHAIN_ITEM)
                    {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport}
                    ...
 
@@ -43,18 +43,12 @@ required arguments:
   -u USERID, --userid USERID
                         Apple ID for use with iTunes Connect
   -t ACCESS_TOKEN_KEYCHAIN_ITEM, --access-token-keychain-item ACCESS_TOKEN_KEYCHAIN_ITEM
-                        name of the macOS Keychain item that holds the access
-                        token
+                        name of the macOS Keychain item that holds the iTunes
+                        Connect access token (more secure alternative to -T)
   -T ACCESS_TOKEN, --access-token ACCESS_TOKEN
-                        Access token (can be generated in iTunes Connect -
-                        Sales & Trends - Reports - About Reports)
-  -p PASSWORD_KEYCHAIN_ITEM, --password-keychain-item PASSWORD_KEYCHAIN_ITEM
-                        DEPRECATED: name of the macOS Keychain item that holds
-                        the Apple ID password (cannot be used together with
-                        -P)
-  -P PASSWORD, --password PASSWORD
-                        DEPRECATED: Apple ID password (cannot be used together
-                        with -p)
+                        iTunes Connect access token (can be generated in
+                        iTunes Connect -> Sales & Trends -> Reports -> About
+                        Reports)
 
 commands:
   Specify the task you want to be carried out (use -h after a command's name
@@ -93,7 +87,7 @@ http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
 ### Usage examples
 
 #### Obtaining an iTunes Connect access token
-Apple will enforce the use of access tokens instead of passwords for **Reporter** by August 2017. To generate an access token for an Apple ID, log in to iTunes Connect using the Apple ID that you plan to use with `reporter.py`. Go to *Sales and Trends > Reports*, then click on the tooltip next to *About Reports*. Click *Generate Access Token*.
+Since end of July 2017, Apple requires the use of access tokens instead of passwords for **Reporter**. To generate an access token for an Apple ID, log in to iTunes Connect using the Apple ID that you plan to use with `reporter.py`. Go to *Sales and Trends > Reports*, then click on the tooltip next to *About Reports*. Click *Generate Access Token*.
 Tokens expire after 180 days, so you are going to have to renew them in the same way.
 
 #### Querying accessible accounts
