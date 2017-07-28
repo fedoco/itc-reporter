@@ -23,8 +23,7 @@ There really is no compelling reason to employ a Java tool with its somewhat hea
 The argument names and values of this script have mostly been chosen to be consistent with [Apple's documentation for Reporter](https://help.apple.com/itc/appsreporterguide/). To get a quick overview, here is the output of `./reporter.py -h`: 
 ```text
 usage: reporter.py [-h] [-a ACCOUNT] [-m {Normal,Robot.XML}] -u USERID
-                   (-T ACCESS_TOKEN | -t ACCESS_TOKEN_KEYCHAIN_ITEM)
-                   {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport}
+                   {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,generateToken,viewToken,deleteToken}
                    ...
 
 Reporting tool for querying Sales- and Financial Reports from iTunes Connect
@@ -42,19 +41,12 @@ optional arguments:
 required arguments:
   -u USERID, --userid USERID
                         Apple ID for use with iTunes Connect
-  -t ACCESS_TOKEN_KEYCHAIN_ITEM, --access-token-keychain-item ACCESS_TOKEN_KEYCHAIN_ITEM
-                        name of the macOS Keychain item that holds the iTunes
-                        Connect access token (more secure alternative to -T)
-  -T ACCESS_TOKEN, --access-token ACCESS_TOKEN
-                        iTunes Connect access token (can be generated in
-                        iTunes Connect -> Sales & Trends -> Reports -> About
-                        Reports)
 
 commands:
   Specify the task you want to be carried out (use -h after a command's name
   to get additional help for that command)
 
-  {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport}
+  {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,generateToken,viewToken,deleteToken}
     getStatus           check if iTunes Connect is available for queries
     getAccounts         fetch a list of accounts accessible to the Apple ID
                         given in -u
@@ -79,6 +71,11 @@ commands:
                         specific date range
     getOptInReport      download contact information for customers who opt in
                         to share their contact information with you
+    generateToken       generate a token for accessing iTunes Connect (expires
+                        after 180 days)
+    viewToken           display current iTunes Connect access token and its
+                        expiration date
+    deleteToken         delete an existing iTunes Connect access token
 
 For a detailed description of report types, see
 http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
@@ -88,13 +85,17 @@ http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
 
 #### Obtaining an iTunes Connect access token
 Since end of July 2017, Apple requires the use of access tokens instead of passwords for **Reporter**. To generate an access token for an Apple ID, log in to iTunes Connect using the Apple ID that you plan to use with `reporter.py`. Go to *Sales and Trends > Reports*, then click on the tooltip next to *About Reports*. Click *Generate Access Token*.
-Tokens expire after 180 days, so you are going to have to renew them in the same way.
+Tokens expire after 180 days, so you are going to have to renew them in the same way. But instead of doing these steps manually, you can also let `reporter.py` fetch a token for you from iTunes Connect:
+
+```sh
+./reporter.py -u your@apple-id.com generateToken -P YourAppleIDPassword
+```
 
 #### Querying accessible accounts
 Because your Apple ID could have access to multiple accounts, you will sometimes need to specify the account number you’d like to use. Use the following query to find out which accounts are available:
 
 ```sh
-./reporter.py -u your@apple-id.com -T youraccesstoken getAccounts Sales
+./reporter.py -u your@apple-id.com getAccounts Sales -T youraccesstoken
 ```
 The result is a list of account numbers you can then specify with the `-a` or `--account` argument in later queries regarding sales reports. Similarly, you'd use `getAccounts Finance` in order to find out account numbers that can be used for financial report queries.
 
@@ -104,27 +105,29 @@ But what about the cleartext token following the `-T` parameter? If you want to 
 The following example queries iTunes Connect's availability status for financial reports while fetching the access token from the Keychain item named "iTC Access":
 
 ```sh
-./reporter.py -u your@apple-id.com -t "iTC Access" getStatus Finance
+./reporter.py -u your@apple-id.com getStatus Finance -t "iTC Access"
 ```
+
+Please note that there is also a corresponding `-p` parameter for fetching passwords securely from the Keychain instead of supplying them on the command line with `-P`. 
 
 #### Retrieving reports
 Let's get to the point of this tool now: Retrieving reports from iTunes Connect.
 To find out which vendor numbers you can query, you'll first need to get a list of available vendors, using (one of) the account number(s) you have found out with `getAccounts` before:
 
 ```sh
-./reporter.py -u your@apple-id.com -t "iTC Access" --account 2821955 getVendors
+./reporter.py -u your@apple-id.com --account 2821955 getVendors -t "iTC Access"
 ```
 
-The resulting vendor number(s) can then be used to get the actual reports. In the following example, a sales report listing the sales of a single day (2016/08/18) for vendor 85442109 is going to be retrieved: 
+The resulting vendor number(s) can then be used to get the actual reports. In the following example, a sales report listing the sales of a single day (2017/07/18) for vendor 85442109 is going to be retrieved: 
 
 ```sh
-./reporter.py -u your@apple-id.com -t "iTC Access" -a 2821955 getSalesReport 85442109 Daily 20160818
+./reporter.py -u your@apple-id.com -a 2821955 getSalesReport 85442109 Daily 20170718 -t "iTC Access"
 ```
 
-Likewise, the following example fetches a financial report for sales in the US region in the first period of 2016 (according to Apple's fiscal calendar):
+Likewise, the following example fetches a financial report for sales in the US region in the first period of 2017 (according to Apple's fiscal calendar):
 
 ```sh
-./reporter.py -u your@apple-id.com -t "iTC Access" -a 2821955 getFinancialReport 85442109 US 2016 01
+./reporter.py -u your@apple-id.com -a 2821955 getFinancialReport 85442109 US 2017 01 -t "iTC Access"
 ```
 
 These examples should do for a quick introduction. Don't forget to read Apple's [reference documentation](https://help.apple.com/itc/appsreporterguide/) for **Reporter**. Also, you can get further help for a specific command by supplying `-h` after the command's name. For example: 

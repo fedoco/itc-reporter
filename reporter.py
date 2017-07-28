@@ -32,7 +32,7 @@
 
 import argparse, urllib, urllib2, json, zlib, datetime, keychain
 
-VERSION = '2.1'
+VERSION = '2.2'
 ENDPOINT_SALES = 'https://reportingitc-reporter.apple.com/reportservice/sales/v1'
 ENDPOINT_FINANCE = 'https://reportingitc-reporter.apple.com/reportservice/finance/v1'
 
@@ -84,6 +84,24 @@ def itc_get_opt_in_report(args):
     command = 'Sales.getReport, {0},Sales,Opt-In,Weekly,{1}'.format(args.vendor, args.date)
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command), False) # do not attempt to unzip because it's password protected
 
+def itc_view_token(args):
+    command = 'Sales.viewToken'
+    output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
+
+def itc_generate_token(args):
+    command = 'Sales.generateToken'
+
+    # generating a new token requires mirroring back a request id to the iTC server, so let's examine the response header...
+    _, header = post_request(ENDPOINT_SALES, get_credentials(args), command)
+    service_request_id = header.dict['service_request_id']
+
+    # ...and post back the request id
+    output_result(post_request(ENDPOINT_SALES, get_credentials(args), command, "&isExistingToken=Y&requestId=" + service_request_id))
+
+def itc_delete_token(args):
+    command = 'Sales.deleteToken'
+    output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
+
 # login credentials
 
 def get_credentials(args):
@@ -93,8 +111,7 @@ def get_credentials(args):
     access_token = keychain.find_generic_password(None, args.access_token_keychain_item, '') if args.access_token_keychain_item else args.access_token
 
     # ...but commands for access token manipulation (yet to be implemented!) need the plaintext password of the iTunes Connect account
-    # password = args.password if args.command == 'viewToken' or 'generateToken' else None
-    password = None
+    password = keychain.find_generic_password(None, args.password_keychain_item, '') if args.password_keychain_item else args.password 
 
     return (args.userid, access_token, password, str(args.account), args.mode)
 
@@ -115,11 +132,13 @@ def build_json_request_string(credentials, query):
 
     return 'jsonRequest=' + request
 
-def post_request(endpoint, credentials, command):
+def post_request(endpoint, credentials, command, url_params = None):
     """Execute the HTTP POST request"""
 
     command = "[p=Reporter.properties, %s]" % command
     request_data = build_json_request_string(credentials, command)
+    if url_params: request_data += url_params
+
     request = urllib2.Request(endpoint, request_data)
     request.add_header('Accept', 'text/html,image/gif,image/jpeg; q=.2, */*; q=.2')
 
@@ -170,65 +189,87 @@ def parse_arguments():
     # always required arguments
     required_args = parser.add_argument_group("required arguments")
     required_args.add_argument('-u', '--userid', required=True, help="Apple ID for use with iTunes Connect")
-    mutex_group = required_args.add_mutually_exclusive_group(required=True)
+
+    # template for commands that require authentication with password
+    parser_auth_password = argparse.ArgumentParser(add_help=False)
+    parser_auth_password.set_defaults(access_token=None, access_token_keychain_item=None)
+    auth_password_args = parser_auth_password.add_argument_group()
+    mutex_group = auth_password_args.add_mutually_exclusive_group(required=True)
+    mutex_group.add_argument('-p', '--password-keychain-item', help='Apple ID password (cannot be used together with -p)')
+    mutex_group.add_argument('-P', '--password', help='name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)')
+
+    # template for commands that require authentication with access token
+    parser_auth_token = argparse.ArgumentParser(add_help=False)
+    parser_auth_token.set_defaults(password=None, password_keychain_item=None)
+    auth_token_args = parser_auth_token.add_argument_group()
+    mutex_group = auth_token_args.add_mutually_exclusive_group(required=True)
     mutex_group.add_argument('-t', '--access-token-keychain-item', help='name of the macOS Keychain item that holds the iTunes Connect access token (more secure alternative to -T)')
     mutex_group.add_argument('-T', '--access-token', help='iTunes Connect access token (can be generated in iTunes Connect -> Sales & Trends -> Reports -> About Reports)')
-    
+
     # commands
     subparsers = parser.add_subparsers(dest='command', title='commands', description="Specify the task you want to be carried out (use -h after a command's name to get additional help for that command)")
 
-    parser_01 = subparsers.add_parser('getStatus', help="check if iTunes Connect is available for queries")
+    parser_01 = subparsers.add_parser('getStatus', help="check if iTunes Connect is available for queries", parents=[parser_auth_token])
     parser_01.add_argument('service', choices=['Sales', 'Finance'], help="service endpoint to query")
     parser_01.set_defaults(func=itc_get_status)
 
-    parser_02 = subparsers.add_parser('getAccounts', help="fetch a list of accounts accessible to the Apple ID given in -u")
+    parser_02 = subparsers.add_parser('getAccounts', help="fetch a list of accounts accessible to the Apple ID given in -u", parents=[parser_auth_token])
     parser_02.add_argument('service', choices=['Sales', 'Finance'], help="service endpoint to query")
     parser_02.set_defaults(func=itc_get_accounts)
 
-    parser_03 = subparsers.add_parser('getVendors', help="fetch a list of vendors accessible to the Apple ID given in -u")
+    parser_03 = subparsers.add_parser('getVendors', help="fetch a list of vendors accessible to the Apple ID given in -u", parents=[parser_auth_token])
     parser_03.set_defaults(func=itc_get_vendors)
 
-    parser_04 = subparsers.add_parser('getVendorsAndRegions', help="fetch a list of financial reports you can download by vendor number and region")
+    parser_04 = subparsers.add_parser('getVendorsAndRegions', help="fetch a list of financial reports you can download by vendor number and region", parents=[parser_auth_token])
     parser_04.set_defaults(func=itc_get_vendor_and_regions)
 
-    parser_05 = subparsers.add_parser('getFinancialReport', help="download a financial report file for a specific region and fiscal period")
+    parser_05 = subparsers.add_parser('getFinancialReport', help="download a financial report file for a specific region and fiscal period", parents=[parser_auth_token])
     parser_05.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_05.add_argument('regioncode', help="two-character code of country of the report to download (for a list of country codes by vendor number, use the 'getVendorsAndRegions' command)")
     parser_05.add_argument('fiscalyear', help="four-digit year of the report to download (year is specific to Apple’s fiscal calendar)")
     parser_05.add_argument('fiscalperiod', help="period in fiscal year for the report to download (1-12; period is specific to Apple’s fiscal calendar)")
     parser_05.set_defaults(func=itc_get_financial_report)
 
-    parser_06 = subparsers.add_parser('getSalesReport', help="download a summary sales report file for a specific date range")
+    parser_06 = subparsers.add_parser('getSalesReport', help="download a summary sales report file for a specific date range", parents=[parser_auth_token])
     parser_06.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_06.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
     parser_06.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
     parser_06.set_defaults(func=itc_get_sales_report)
 
-    parser_07 = subparsers.add_parser('getSubscriptionReport', help="download a subscription report file for a specific day")
+    parser_07 = subparsers.add_parser('getSubscriptionReport', help="download a subscription report file for a specific day", parents=[parser_auth_token])
     parser_07.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_07.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_07.set_defaults(func=itc_get_subscription_report)
 
-    parser_08 = subparsers.add_parser('getSubscriptionEventReport', help="download an aggregated subscriber activity report file for a specific day")
+    parser_08 = subparsers.add_parser('getSubscriptionEventReport', help="download an aggregated subscriber activity report file for a specific day", parents=[parser_auth_token])
     parser_08.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_08.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_08.set_defaults(func=itc_get_subscription_event_report)
 
-    parser_09 = subparsers.add_parser('getSubscriberReport', help="download a transaction-level subscriber activity report file for a specific day")
+    parser_09 = subparsers.add_parser('getSubscriberReport', help="download a transaction-level subscriber activity report file for a specific day", parents=[parser_auth_token])
     parser_09.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_09.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_09.set_defaults(func=itc_get_subscriber_report)
 
-    parser_10 = subparsers.add_parser('getNewsstandReport', help="download a magazines & newspapers report file for a specific date range")
+    parser_10 = subparsers.add_parser('getNewsstandReport', help="download a magazines & newspapers report file for a specific date range", parents=[parser_auth_token])
     parser_10.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_10.add_argument('datetype', choices=['Daily', 'Weekly'], help="length of time covered by the report")
     parser_10.add_argument('date', help="specific time covered by the report (weekly reports, like daily reports, use YYYYMMDD, where the day used is the Sunday that week ends")
     parser_10.set_defaults(func=itc_get_newsstand_report)
 
-    parser_11 = subparsers.add_parser('getOptInReport', help="download contact information for customers who opt in to share their contact information with you")
+    parser_11 = subparsers.add_parser('getOptInReport', help="download contact information for customers who opt in to share their contact information with you", parents=[parser_auth_token])
     parser_11.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_11.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_11.set_defaults(func=itc_get_opt_in_report)
+
+    parser_12 = subparsers.add_parser('generateToken', help="generate a token for accessing iTunes Connect (expires after 180 days)", parents=[parser_auth_password])
+    parser_12.set_defaults(func=itc_generate_token)
+
+    parser_13 = subparsers.add_parser('viewToken', help="display current iTunes Connect access token and its expiration date", parents=[parser_auth_password])
+    parser_13.set_defaults(func=itc_view_token)
+
+    parser_14 = subparsers.add_parser('deleteToken', help="delete an existing iTunes Connect access token", parents=[parser_auth_password])
+    parser_14.set_defaults(func=itc_delete_token)
 
     args = parser.parse_args()
 
@@ -246,6 +287,12 @@ def validate_arguments(args):
            keychain.find_generic_password(None, args.access_token_keychain_item, '')
        except:
            raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.access_token_keychain_item))
+
+    if args.password_keychain_item:
+       try:
+           keychain.find_generic_password(None, args.password_keychain_item, '')
+       except:
+           raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.password_keychain_item))
 
     if not args.account and (args.command == 'getVendorsAndRegions' or args.command == 'getVendors' or args.command == 'getFinancialReport'):
         raise ValueError("Error: Argument -a/--account is needed for command '%s'" % args.command)
