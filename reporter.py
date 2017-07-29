@@ -30,7 +30,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import argparse, urllib, urllib2, json, zlib, datetime, keychain
+import sys, argparse, urllib, urllib2, json, zlib, datetime
+if sys.platform == 'darwin':
+    import keychain
 
 VERSION = '2.2'
 ENDPOINT_SALES = 'https://reportingitc-reporter.apple.com/reportservice/sales/v1'
@@ -110,7 +112,7 @@ def get_credentials(args):
     # for most commands an iTunes Connect access token is needed - fetched either from the command line or from Keychain...
     access_token = keychain.find_generic_password(None, args.access_token_keychain_item, '') if args.access_token_keychain_item else args.access_token
 
-    # ...but commands for access token manipulation (yet to be implemented!) need the plaintext password of the iTunes Connect account
+    # ...but commands for access token manipulation need the plaintext password of the iTunes Connect account
     password = keychain.find_generic_password(None, args.password_keychain_item, '') if args.password_keychain_item else args.password 
 
     return (args.userid, access_token, password, str(args.account), args.mode)
@@ -274,25 +276,28 @@ def parse_arguments():
     args = parser.parse_args()
 
     try:
-      validate_arguments(args)
-      args.func(args)
+        validate_arguments(args)
+        args.func(args)
     except ValueError, e:
-      parser.error(e)
+        parser.error(e)
 
 def validate_arguments(args):
     """Do some additional checks on the passed arguments which argparse couldn't handle directly"""
 
+    if sys.platform != 'darwin' and (args.password_keychain_item or args.access_token_keychain_item):
+        raise ValueError("Error: Keychain support is limited to macOS")
+
     if args.access_token_keychain_item:
-       try:
-           keychain.find_generic_password(None, args.access_token_keychain_item, '')
-       except:
-           raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.access_token_keychain_item))
+        try:
+            keychain.find_generic_password(None, args.access_token_keychain_item, '')
+        except:
+            raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.access_token_keychain_item))
 
     if args.password_keychain_item:
-       try:
-           keychain.find_generic_password(None, args.password_keychain_item, '')
-       except:
-           raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.password_keychain_item))
+        try:
+            keychain.find_generic_password(None, args.password_keychain_item, '')
+        except:
+            raise ValueError("Error: Could not find an item named '{0}' in the default Keychain".format(args.password_keychain_item))
 
     if not args.account and (args.command == 'getVendorsAndRegions' or args.command == 'getVendors' or args.command == 'getFinancialReport'):
         raise ValueError("Error: Argument -a/--account is needed for command '%s'" % args.command)
@@ -304,11 +309,11 @@ def validate_arguments(args):
             raise ValueError("Error: Fiscal year must be specified as YYYY")
 
     if hasattr(args, 'fiscalperiod'):
-       try:
-           if int(args.fiscalperiod) < 1 or int(args.fiscalperiod) > 12:
-               raise Exception
-       except:
-           raise ValueError("Error: Fiscal period must be a value between 1 and 12")
+        try:
+            if int(args.fiscalperiod) < 1 or int(args.fiscalperiod) > 12:
+                raise Exception
+        except:
+            raise ValueError("Error: Fiscal period must be a value between 1 and 12")
 
     if hasattr(args, 'datetype'):
         format = '%Y%m%d'
@@ -329,6 +334,5 @@ def validate_arguments(args):
 # main
 
 if __name__ == '__main__':
-    args = parse_arguments()
-
+    parse_arguments()
     exit(0)
