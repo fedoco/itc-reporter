@@ -277,9 +277,10 @@ def parse_arguments():
 
     try:
         validate_arguments(args)
-        args.func(args)
     except ValueError, e:
         parser.error(e)
+
+    return args
 
 def validate_arguments(args):
     """Do some additional checks on the passed arguments which argparse couldn't handle directly"""
@@ -334,5 +335,12 @@ def validate_arguments(args):
 # main
 
 if __name__ == '__main__':
-    parse_arguments()
+    args = parse_arguments()
+
+    try:
+        args.func(args)
+    except ValueError, e:
+        print e
+        exit(-1)
+
     exit(0)
