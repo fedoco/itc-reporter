@@ -60,10 +60,9 @@ SecKeychainFindGenericPassword.argtypes = (
     c_char_p,
     c_uint32,
     c_char_p,
-    POINTER(c_uint32),  # passwordLength
-    POINTER(c_void_p),  # passwordData
-    POINTER(sec_keychain_item_ref),  # itemRef
-)
+    POINTER(c_uint32),
+    POINTER(c_void_p),
+    POINTER(sec_keychain_item_ref))
 SecKeychainFindGenericPassword.restype = OS_status
 
 def find_generic_password(kc_name, service, username):
@@ -80,13 +79,68 @@ def find_generic_password(kc_name, service, username):
                 username,
                 length,
                 data,
-                None,
-            )
+                None)
 
-        msg = "Can't fetch password from system"
+        msg = "Can't fetch password from Keychain"
         NotFound.raise_for_status(status, msg)
 
         password = ctypes.create_string_buffer(length.value)
         ctypes.memmove(password, data.value, length.value)
         SecKeychainItemFreeContent(None, data)
         return password.raw.decode('utf-8')
+
+SecKeychainAddGenericPassword = _sec.SecKeychainAddGenericPassword
+SecKeychainAddGenericPassword.argtypes = (
+    sec_keychain_ref,
+    c_uint32,
+    c_char_p,
+    c_uint32,
+    c_char_p,
+    c_uint32,
+    c_char_p,
+    POINTER(sec_keychain_item_ref))
+SecKeychainAddGenericPassword.restype = OS_status
+
+SecKeychainItemModifyAttributesAndData = _sec.SecKeychainItemModifyAttributesAndData
+SecKeychainItemModifyAttributesAndData.argtypes = (
+    sec_keychain_item_ref,
+    c_void_p,
+    c_uint32,
+    c_void_p)
+SecKeychainItemModifyAttributesAndData.restype = OS_status
+
+def set_generic_password(kc_name, service, username, password):
+    username = username.encode('utf-8')
+    service = service.encode('utf-8')
+    password = password.encode('utf-8')
+    with open(kc_name) as keychain:
+        item = sec_keychain_item_ref()
+        status = SecKeychainFindGenericPassword(
+            keychain,
+            len(service),
+            service,
+            len(username),
+            username,
+            None,
+            None,
+            item)
+        if status:
+            if status == error.item_not_found:
+                status = SecKeychainAddGenericPassword(
+                    keychain,
+                    len(service),
+                    service,
+                    len(username),
+                    username,
+                    len(password),
+                    password,
+                    None)
+        else:
+            status = SecKeychainItemModifyAttributesAndData(
+                item,
+                None,
+                len(password),
+                password)
+            _core.CFRelease(item)
+
+        NotFound.raise_for_status(status, "Unable to set password in Keychain")

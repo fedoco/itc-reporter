@@ -98,7 +98,18 @@ def itc_generate_token(args):
     service_request_id = header.dict['service_request_id']
 
     # ...and post back the request id
-    output_result(post_request(ENDPOINT_SALES, get_credentials(args), command, "&isExistingToken=Y&requestId=" + service_request_id))
+    result = post_request(ENDPOINT_SALES, get_credentials(args), command, "&isExistingToken=Y&requestId=" + service_request_id)
+    output_result(result)
+
+    # optionally store the new token in Keychain upon success
+    content, _ = result
+    if content and args.update_keychain_item:
+        for line in content.splitlines():
+            if line.startswith("AccessToken:"):
+                token = line[12:]
+                keychain.set_generic_password(None, args.update_keychain_item, '', token)
+                if not args.mode == 'Robot.XML': print "Keychain has been updated."
+                break
 
 def itc_delete_token(args):
     command = 'Sales.deleteToken'
@@ -197,16 +208,16 @@ def parse_arguments():
     parser_auth_password.set_defaults(access_token=None, access_token_keychain_item=None)
     auth_password_args = parser_auth_password.add_argument_group()
     mutex_group = auth_password_args.add_mutually_exclusive_group(required=True)
-    mutex_group.add_argument('-p', '--password-keychain-item', help='Apple ID password (cannot be used together with -p)')
-    mutex_group.add_argument('-P', '--password', help='name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)')
+    mutex_group.add_argument('-p', '--password-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)')
+    mutex_group.add_argument('-P', '--password', help='Apple ID password (cannot be used together with -p)')
 
     # template for commands that require authentication with access token
     parser_auth_token = argparse.ArgumentParser(add_help=False)
     parser_auth_token.set_defaults(password=None, password_keychain_item=None)
     auth_token_args = parser_auth_token.add_argument_group()
     mutex_group = auth_token_args.add_mutually_exclusive_group(required=True)
-    mutex_group.add_argument('-t', '--access-token-keychain-item', help='name of the macOS Keychain item that holds the iTunes Connect access token (more secure alternative to -T)')
-    mutex_group.add_argument('-T', '--access-token', help='iTunes Connect access token (can be generated in iTunes Connect -> Sales & Trends -> Reports -> About Reports)')
+    mutex_group.add_argument('-t', '--access-token-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the iTunes Connect access token (more secure alternative to -T)')
+    mutex_group.add_argument('-T', '--access-token', help='iTunes Connect access token (can be obtained with the generateToken command or via iTunes Connect -> Sales & Trends -> Reports -> About Reports)')
 
     # commands
     subparsers = parser.add_subparsers(dest='command', title='commands', description="Specify the task you want to be carried out (use -h after a command's name to get additional help for that command)")
@@ -264,7 +275,8 @@ def parse_arguments():
     parser_11.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_11.set_defaults(func=itc_get_opt_in_report)
 
-    parser_12 = subparsers.add_parser('generateToken', help="generate a token for accessing iTunes Connect (expires after 180 days)", parents=[parser_auth_password])
+    parser_12 = subparsers.add_parser('generateToken', help="generate a token for accessing iTunes Connect (expires after 180 days) and optionally store it in the macOS Keychain", parents=[parser_auth_password])
+    parser_12.add_argument('--update-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item in which the new access token should be stored in')
     parser_12.set_defaults(func=itc_generate_token)
 
     parser_13 = subparsers.add_parser('viewToken', help="display current iTunes Connect access token and its expiration date", parents=[parser_auth_password])
