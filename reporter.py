@@ -135,15 +135,12 @@ def build_json_request_string(credentials, query):
 
     userid, accessToken, password, account, mode = credentials
 
-    request_data = dict(userid=userid, version=VERSION, mode=mode, queryInput=query)
-    if account: request_data.update(account=account) # empty account info would result in error 404 
-    if accessToken: request_data.update(accesstoken=accessToken)
-    if password: request_data.update(password=password)
+    request = dict(userid=userid, version=VERSION, mode=mode, queryInput=query)
+    if account: request.update(account=account) # empty account info would result in error 404
+    if accessToken: request.update(accesstoken=accessToken)
+    if password: request.update(password=password)
 
-    request = {k: urllib.quote_plus(v) for k, v in request_data.items()}
-    request = json.dumps(request)
-
-    return 'jsonRequest=' + request
+    return urllib.urlencode(dict(jsonRequest=json.dumps(request)))
 
 def post_request(endpoint, credentials, command, url_params = None):
     """Execute the HTTP POST request"""
