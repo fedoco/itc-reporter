@@ -23,7 +23,7 @@ There really is no compelling reason to employ a Java tool with its somewhat hea
 The argument names and values of this script have mostly been chosen to be consistent with [Apple's documentation for Reporter](https://help.apple.com/itc/appsreporterguide/). To get a quick overview, here is the output of `./reporter.py -h`: 
 ```text
 usage: reporter.py [-h] [-a ACCOUNT] [-m {Normal,Robot.XML}] -u USERID
-                   {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,generateToken,viewToken,deleteToken}
+                   {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,getPreOrderReport,generateToken,viewToken,deleteToken}
                    ...
 
 Reporting tool for querying Sales- and Financial Reports from iTunes Connect
@@ -46,7 +46,7 @@ commands:
   Specify the task you want to be carried out (use -h after a command's name
   to get additional help for that command)
 
-  {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,generateToken,viewToken,deleteToken}
+  {getStatus,getAccounts,getVendors,getVendorsAndRegions,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,getPreOrderReport,generateToken,viewToken,deleteToken}
     getStatus           check if iTunes Connect is available for queries
     getAccounts         fetch a list of accounts accessible to the Apple ID
                         given in -u
@@ -71,6 +71,8 @@ commands:
                         specific date range
     getOptInReport      download contact information for customers who opt in
                         to share their contact information with you
+    getPreOrderReport   download a summary report file of pre-ordered items
+                        for a specific date range
     generateToken       generate a token for accessing iTunes Connect (expires
                         after 180 days) and optionally store it in the macOS
                         Keychain

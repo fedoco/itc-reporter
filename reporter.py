@@ -86,6 +86,10 @@ def itc_get_opt_in_report(args):
     command = 'Sales.getReport, {0},Sales,Opt-In,Weekly,{1}'.format(args.vendor, args.date)
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command), False) # do not attempt to unzip because it's password protected
 
+def itc_get_pre_order_report(args):
+    command = 'Sales.getReport, {0},Pre-Order,Summary,{1},{2}'.format(args.vendor, args.datetype, args.date)
+    output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
+
 def itc_view_token(args):
     command = 'Sales.viewToken'
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
@@ -272,15 +276,21 @@ def parse_arguments():
     parser_11.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_11.set_defaults(func=itc_get_opt_in_report)
 
-    parser_12 = subparsers.add_parser('generateToken', help="generate a token for accessing iTunes Connect (expires after 180 days) and optionally store it in the macOS Keychain", parents=[parser_auth_password])
-    parser_12.add_argument('--update-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item in which the new access token should be stored in')
-    parser_12.set_defaults(func=itc_generate_token)
+    parser_12 = subparsers.add_parser('getPreOrderReport', help="download a summary report file of pre-ordered items for a specific date range", parents=[parser_auth_token])
+    parser_12.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_12.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
+    parser_12.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
+    parser_12.set_defaults(func=itc_get_pre_order_report)
 
-    parser_13 = subparsers.add_parser('viewToken', help="display current iTunes Connect access token and its expiration date", parents=[parser_auth_password])
-    parser_13.set_defaults(func=itc_view_token)
+    parser_13 = subparsers.add_parser('generateToken', help="generate a token for accessing iTunes Connect (expires after 180 days) and optionally store it in the macOS Keychain", parents=[parser_auth_password])
+    parser_13.add_argument('--update-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item in which the new access token should be stored in')
+    parser_13.set_defaults(func=itc_generate_token)
 
-    parser_14 = subparsers.add_parser('deleteToken', help="delete an existing iTunes Connect access token", parents=[parser_auth_password])
-    parser_14.set_defaults(func=itc_delete_token)
+    parser_14 = subparsers.add_parser('viewToken', help="display current iTunes Connect access token and its expiration date", parents=[parser_auth_password])
+    parser_14.set_defaults(func=itc_view_token)
+
+    parser_15 = subparsers.add_parser('deleteToken', help="delete an existing iTunes Connect access token", parents=[parser_auth_password])
+    parser_15.set_defaults(func=itc_delete_token)
 
     args = parser.parse_args()
 
