@@ -58,6 +58,11 @@ def itc_get_vendor_and_regions(args):
     command = 'Finance.getVendorsAndRegions'
     output_result(post_request(ENDPOINT_FINANCE, get_credentials(args), command))
 
+def itc_get_report_version(args):
+    # service is limited to Sales for now because although documented it doesn't work for Finance
+    command = 'Sales.getReportVersion, {0},{1}'.format(args.reporttype, args.reportsubtype)
+    output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
+
 def itc_get_financial_report(args):
     command = 'Finance.getReport, {0},{1},Financial,{2},{3}'.format(args.vendor, args.regioncode, args.fiscalyear, args.fiscalperiod)
     output_result(post_request(ENDPOINT_FINANCE, get_credentials(args), command))
@@ -67,15 +72,15 @@ def itc_get_sales_report(args):
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
 
 def itc_get_subscription_report(args):
-    command = 'Sales.getReport, {0},Subscription,Summary,Daily,{1}'.format(args.vendor, args.date)
+    command = 'Sales.getReport, {0},Subscription,Summary,Daily,{1},{2}'.format(args.vendor, args.date, args.version)
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
 
 def itc_get_subscription_event_report(args):
-    command = 'Sales.getReport, {0},SubscriptionEvent,Summary,Daily,{1}'.format(args.vendor, args.date)
+    command = 'Sales.getReport, {0},SubscriptionEvent,Summary,Daily,{1},{2}'.format(args.vendor, args.date, args.version)
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
 
 def itc_get_subscriber_report(args):
-    command = 'Sales.getReport, {0},Subscriber,Detailed,Daily,{1}'.format(args.vendor, args.date)
+    command = 'Sales.getReport, {0},Subscriber,Detailed,Daily,{1},{2}'.format(args.vendor, args.date, args.version)
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
 
 def itc_get_newsstand_report(args):
@@ -237,6 +242,11 @@ def parse_arguments():
     parser_cmd = subparsers.add_parser('getVendorsAndRegions', help="fetch a list of financial reports you can download by vendor number and region", parents=[parser_auth_token])
     parser_cmd.set_defaults(func=itc_get_vendor_and_regions)
 
+    parser_cmd = subparsers.add_parser('getReportVersion', help="query what is the latest available version of reports of a specific type and subtype", parents=[parser_auth_token])
+    parser_cmd.add_argument('reporttype', choices=['Sales', 'Subscription', 'SubscriptionEvent', 'Subscriber', 'Newsstand', 'Pre-Order'])
+    parser_cmd.add_argument('reportsubtype', choices=['Summary', 'Detailed', 'Opt-In'])
+    parser_cmd.set_defaults(func=itc_get_report_version)
+
     parser_cmd = subparsers.add_parser('getFinancialReport', help="download a financial report file for a specific region and fiscal period", parents=[parser_auth_token])
     parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_cmd.add_argument('regioncode', help="two-character code of country of the report to download (for a list of country codes by vendor number, use the 'getVendorsAndRegions' command)")
@@ -253,16 +263,19 @@ def parse_arguments():
     parser_cmd = subparsers.add_parser('getSubscriptionReport', help="download a subscription report file for a specific day", parents=[parser_auth_token])
     parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_cmd.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
+    parser_cmd.add_argument('-v', '--version', choices=['1_0', '1_1'], default='1_1', help="report format version to use (if omitted, the latest available version is used)")
     parser_cmd.set_defaults(func=itc_get_subscription_report)
 
     parser_cmd = subparsers.add_parser('getSubscriptionEventReport', help="download an aggregated subscriber activity report file for a specific day", parents=[parser_auth_token])
     parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_cmd.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
+    parser_cmd.add_argument('-v', '--version', choices=['1_0', '1_1'], default='1_1', help="report format version to use (if omitted, the latest available version is used)")
     parser_cmd.set_defaults(func=itc_get_subscription_event_report)
 
     parser_cmd = subparsers.add_parser('getSubscriberReport', help="download a transaction-level subscriber activity report file for a specific day", parents=[parser_auth_token])
     parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
     parser_cmd.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
+    parser_cmd.add_argument('-v', '--version', choices=['1_0', '1_1'], default='1_1', help="report format version to use (if omitted, the latest available version is used)")
     parser_cmd.set_defaults(func=itc_get_subscriber_report)
 
     parser_cmd = subparsers.add_parser('getNewsstandReport', help="download a magazines & newspapers report file for a specific date range", parents=[parser_auth_token])
