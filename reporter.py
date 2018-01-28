@@ -30,7 +30,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import sys, argparse, urllib, urllib2, json, zlib, datetime
+import sys, argparse, urllib, urllib2, json, zlib, re, datetime
 if sys.platform == 'darwin':
     import keychain
 
@@ -113,12 +113,12 @@ def itc_generate_token(args):
     # optionally store the new token in Keychain upon success
     content, _ = result
     if content and args.update_keychain_item:
-        for line in content.splitlines():
-            if line.startswith("AccessToken:"):
-                token = line[12:]
-                keychain.set_generic_password(None, args.update_keychain_item, '', token)
-                if not args.mode == 'Robot.XML': print "Keychain has been updated."
-                break
+        # extract token for both operation modes (Robot.XML or Normal)
+        token = re.findall('<AccessToken>(.*?)</AccessToken>', content) or re.findall('AccessToken:(.*?)$', content, re.M)
+        if token:
+            token = token[0]
+            keychain.set_generic_password(None, args.update_keychain_item, '', token)
+            if not args.mode == 'Robot.XML': print "Keychain has been updated."
 
 def itc_delete_token(args):
     command = 'Sales.deleteToken'
