@@ -196,11 +196,12 @@ def output_result(result, unzip = True):
 
 # command line arguments
 
-def parse_arguments():
-    """Build and parse the command line arguments"""
-
+def prepare_arguments_parser():
     parser_main = argparse.ArgumentParser(description="Reporting tool for querying Sales- and Financial Reports from iTunes Connect", epilog="For a detailed description of report types, see http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf")
+    
+    return parser_main
 
+def setup_arguments_parser(parser_main):
     # (most of the time) optional arguments
     parser_main.add_argument('-a', '--account', type=int, help="account number (needed if your Apple ID has access to multiple accounts; for a list of your account numbers, use the 'getAccounts' command)")
     parser_main.add_argument('-m', '--mode', choices=['Normal', 'Robot.XML'], default='Normal', help="output format: plain text or XML (defaults to '%(default)s')")
@@ -305,6 +306,12 @@ def parse_arguments():
     parser_cmd = subparsers.add_parser('deleteToken', help="delete an existing iTunes Connect access token", parents=[parser_auth_password])
     parser_cmd.set_defaults(func=itc_delete_token)
 
+def parse_arguments():
+    """Build and parse the command line arguments"""
+    parser_main = prepare_arguments_parser()
+    
+    setup_arguments_parser(parser_main)
+    
     args = parser_main.parse_args()
 
     try:
