@@ -149,7 +149,9 @@ def build_json_request_string(credentials, query):
     if accessToken: request.update(accesstoken=accessToken)
     if password: request.update(password=password)
 
-    return urllib.parse.urlencode(dict(jsonRequest=json.dumps(request)))
+    parsed_data = urllib.parse.urlencode(dict(jsonRequest=json.dumps(request)))
+
+    return bytes(parsed_data, 'utf-8')
 
 def post_request(endpoint, credentials, command, url_params = None):
     """Execute the HTTP POST request"""
@@ -180,15 +182,15 @@ def output_result(result, unzip = True):
     content, header = result
 
     # unpack content into the final report file if it is gzip compressed.
-    if header.gettype() == 'application/a-gzip':
-        msg = header.dict['downloadmsg']
-        filename = header.dict['filename'] or 'report.txt.gz'
+    if header.get('Content-Type') == 'application/a-gzip':
+        msg = header.get('downloadmsg')
+        filename = header.get('filename') or 'report.txt.gz'
         if unzip:
             msg = msg.replace('.txt.gz', '.txt')
             filename = filename[:-3]
             content = zlib.decompress(content, 15 + 32)
         file = open(filename, 'w')
-        file.write(content)
+        file.write(content.decode('utf-8'))
         file.close()
         print(msg)
     else:
