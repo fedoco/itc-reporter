@@ -30,7 +30,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import sys, argparse, urllib, urllib2, json, zlib, re, datetime
+import sys, argparse, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, json, zlib, re, datetime
 if sys.platform == 'darwin':
     import keychain
 
@@ -118,7 +118,7 @@ def itc_generate_token(args):
         if token:
             token = token[0]
             keychain.set_generic_password(None, args.update_keychain_item, '', token)
-            if not args.mode == 'Robot.XML': print "Keychain has been updated."
+            if not args.mode == 'Robot.XML': print("Keychain has been updated.")
 
 def itc_delete_token(args):
     command = 'Sales.deleteToken'
@@ -149,7 +149,9 @@ def build_json_request_string(credentials, query):
     if accessToken: request.update(accesstoken=accessToken)
     if password: request.update(password=password)
 
-    return urllib.urlencode(dict(jsonRequest=json.dumps(request)))
+    parsed_data = urllib.parse.urlencode(dict(jsonRequest=json.dumps(request)))
+
+    return bytes(parsed_data, 'utf-8')
 
 def post_request(endpoint, credentials, command, url_params = None):
     """Execute the HTTP POST request"""
@@ -158,16 +160,16 @@ def post_request(endpoint, credentials, command, url_params = None):
     request_data = build_json_request_string(credentials, command)
     if url_params: request_data += url_params
 
-    request = urllib2.Request(endpoint, request_data)
+    request = urllib.request.Request(endpoint, request_data)
     request.add_header('Accept', 'text/html,image/gif,image/jpeg; q=.2, */*; q=.2')
 
     try:
-        response = urllib2.urlopen(request)
+        response = urllib.request.urlopen(request)
         content = response.read()
         header = response.info()
 
         return (content, header)
-    except urllib2.HTTPError, e:
+    except urllib.error.HTTPError as e:
         if e.code == 400 or e.code == 401 or e.code == 403 or e.code == 404:
             # for these error codes, the body always contains an error message
             raise ValueError(e.read())
@@ -180,19 +182,19 @@ def output_result(result, unzip = True):
     content, header = result
 
     # unpack content into the final report file if it is gzip compressed.
-    if header.gettype() == 'application/a-gzip':
-        msg = header.dict['downloadmsg']
-        filename = header.dict['filename'] or 'report.txt.gz'
+    if header.get('Content-Type') == 'application/a-gzip':
+        msg = header.get('downloadmsg')
+        filename = header.get('filename') or 'report.txt.gz'
         if unzip:
             msg = msg.replace('.txt.gz', '.txt')
             filename = filename[:-3]
             content = zlib.decompress(content, 15 + 32)
         file = open(filename, 'w')
-        file.write(content)
+        file.write(content.decode('utf-8'))
         file.close()
-        print msg
+        print(msg)
     else:
-        print content
+        print(content)
 
 # command line arguments
 
@@ -309,7 +311,7 @@ def parse_arguments():
 
     try:
         validate_arguments(args)
-    except ValueError, e:
+    except ValueError as e:
         parser_main.error(e)
 
     return args
@@ -371,8 +373,8 @@ if __name__ == '__main__':
 
     try:
         args.func(args)
-    except ValueError, e:
-        print e
+    except ValueError as e:
+        print(e)
         exit(-1)
 
     exit(0)
