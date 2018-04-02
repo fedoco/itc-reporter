@@ -196,19 +196,12 @@ def output_result(result, unzip = True):
 
 # command line arguments
 
-def parse_arguments():
-    """Build and parse the command line arguments"""
-
+def prepare_arguments_parser():
     parser_main = argparse.ArgumentParser(description="Reporting tool for querying Sales- and Financial Reports from iTunes Connect", epilog="For a detailed description of report types, see http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf")
+    
+    return parser_main
 
-    # (most of the time) optional arguments
-    parser_main.add_argument('-a', '--account', type=int, help="account number (needed if your Apple ID has access to multiple accounts; for a list of your account numbers, use the 'getAccounts' command)")
-    parser_main.add_argument('-m', '--mode', choices=['Normal', 'Robot.XML'], default='Normal', help="output format: plain text or XML (defaults to '%(default)s')")
-
-    # always required arguments
-    required_args = parser_main.add_argument_group("required arguments")
-    required_args.add_argument('-u', '--userid', required=True, help="Apple ID for use with iTunes Connect")
-
+def setup_arguments_parser_auth_password_template():
     # template for commands that require authentication with password
     parser_auth_password = argparse.ArgumentParser(add_help=False)
     parser_auth_password.set_defaults(access_token=None, access_token_keychain_item=None)
@@ -217,6 +210,9 @@ def parse_arguments():
     mutex_group.add_argument('-p', '--password-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)')
     mutex_group.add_argument('-P', '--password', help='Apple ID password (cannot be used together with -p)')
 
+    return parser_auth_password
+
+def setup_arguments_parser_auth_token_template():
     # template for commands that require authentication with access token
     parser_auth_token = argparse.ArgumentParser(add_help=False)
     parser_auth_token.set_defaults(password=None, password_keychain_item=None)
@@ -224,6 +220,20 @@ def parse_arguments():
     mutex_group = auth_token_args.add_mutually_exclusive_group(required=True)
     mutex_group.add_argument('-t', '--access-token-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the iTunes Connect access token (more secure alternative to -T)')
     mutex_group.add_argument('-T', '--access-token', help='iTunes Connect access token (can be obtained with the generateToken command or via iTunes Connect -> Sales & Trends -> Reports -> About Reports)')
+
+    return parser_auth_token
+
+def setup_arguments_parser(parser_main):
+    # (most of the time) optional arguments
+    parser_main.add_argument('-a', '--account', type=int, help="account number (needed if your Apple ID has access to multiple accounts; for a list of your account numbers, use the 'getAccounts' command)")
+    parser_main.add_argument('-m', '--mode', choices=['Normal', 'Robot.XML'], default='Normal', help="output format: plain text or XML (defaults to '%(default)s')")
+
+    # always required arguments
+    required_args = parser_main.add_argument_group("required arguments")
+    required_args.add_argument('-u', '--userid', required=True, help="Apple ID for use with iTunes Connect")
+
+    parser_auth_password = setup_arguments_parser_auth_password_template()
+    parser_auth_token = setup_arguments_parser_auth_token_template()
 
     # commands
     subparsers = parser_main.add_subparsers(dest='command', title='commands', description="Specify the task you want to be carried out (use -h after a command's name to get additional help for that command)")
@@ -305,6 +315,12 @@ def parse_arguments():
     parser_cmd = subparsers.add_parser('deleteToken', help="delete an existing iTunes Connect access token", parents=[parser_auth_password])
     parser_cmd.set_defaults(func=itc_delete_token)
 
+def parse_arguments():
+    """Build and parse the command line arguments"""
+    parser_main = prepare_arguments_parser()
+    
+    setup_arguments_parser(parser_main)
+    
     args = parser_main.parse_args()
 
     try:
