@@ -262,18 +262,21 @@ def parse_arguments():
 
     parser_cmd = subparsers.add_parser('getSubscriptionReport', help="download a subscription report file for a specific day", parents=[parser_auth_token])
     parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_cmd.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
     parser_cmd.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_cmd.add_argument('-v', '--version', choices=['1_0', '1_1'], default='1_1', help="report format version to use (if omitted, the latest available version is used)")
     parser_cmd.set_defaults(func=itc_get_subscription_report)
 
     parser_cmd = subparsers.add_parser('getSubscriptionEventReport', help="download an aggregated subscriber activity report file for a specific day", parents=[parser_auth_token])
     parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_cmd.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
     parser_cmd.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_cmd.add_argument('-v', '--version', choices=['1_0', '1_1'], default='1_1', help="report format version to use (if omitted, the latest available version is used)")
     parser_cmd.set_defaults(func=itc_get_subscription_event_report)
 
     parser_cmd = subparsers.add_parser('getSubscriberReport', help="download a transaction-level subscriber activity report file for a specific day", parents=[parser_auth_token])
     parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_cmd.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
     parser_cmd.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
     parser_cmd.add_argument('-v', '--version', choices=['1_0', '1_1'], default='1_1', help="report format version to use (if omitted, the latest available version is used)")
     parser_cmd.set_defaults(func=itc_get_subscriber_report)
