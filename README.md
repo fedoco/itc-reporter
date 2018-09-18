@@ -1,22 +1,24 @@
 # iTC Reporter
 
 ## What?
-This script mimics the official **iTunes Connect Reporter** by Apple which is used to automatically **retrieve Sales- and Financial Reports** for your App Store sales.
+This script mimics the official **App Store Connect Reporter** by Apple which is used to automatically **retrieve Sales- and Financial Reports** for your App Store sales.
 It is written in pure Python and **doesn't need a Java runtime installation**.
-Opposed to Apple's tool, it can fetch iTunes Connect login credentials from the macOS Keychain in order to **tighten security** a bit. Also, it goes the extra mile and **unzips the downloaded reports**.
+Opposed to Apple's tool, it can fetch App Store Connect login credentials from the macOS Keychain in order to **tighten security** a bit. Also, it goes the extra mile and **unzips the downloaded reports**.
+
+Before Apple in 2018 decided to rebrand it, App Store Connect used to be called iTunes Connect or iTC in short – hence the name of this script.
 
 ## Why?
 
 ### Once upon a time, there was autoingestion …
-In the past, Apple has provided a tool called **autoingest** for automated retrieving of sales reports from iTunes Connect. While this tool worked quite reliably, it needed a full blown Java Runtime Environment installed. 
+In the past, Apple has provided a tool called **autoingest** for automated retrieving of sales reports from App Store Connect. While this tool worked quite reliably, it needed a full blown Java Runtime Environment installed.
 
 ### … nowadays, it's all about Reporter
-Apple has shut down autoingestion on December 13th, 2016. Fortunately, it has been replaced by a new and a bit more streamlined tool called **Reporter**. Unfortunately, **Reporter** is based on Java, too. It also suffers from a minor but annoying security threat as it needs to read iTunes Connect login credentials from a cleartext file.
+Apple has shut down autoingestion on December 13th, 2016. Fortunately, it has been replaced by a new and a bit more streamlined tool called **Reporter**. Unfortunately, **Reporter** is based on Java, too. It also suffers from a minor but annoying security threat as it needs to read App Store Connect login credentials from a cleartext file.
 
 ### Java really is a sledge hammer to crack this nut
-There really is no compelling reason to employ a Java tool with its somewhat heavyweight dependency on JRE in order to download a few reports from iTunes Connect. Apart from the Apple backend engineering staff really being into Java, apparently. Also, storing login credentials in cleartext isn't state of the art anymore.
+There really is no compelling reason to employ a Java tool with its somewhat heavyweight dependency on JRE in order to download a few reports from App Store Connect. Apart from the Apple backend engineering staff really being into Java, apparently. Also, storing login credentials in cleartext isn't state of the art anymore.
 
-**iTC Reporter** (this Python script), on the other hand, solves both problems. It is written in pure Python and doesn't need Java or any external dependencies to function. Also, it can optionally read the iTC access token from the OS X Keychain (though it generally is still advisable to use an extra Apple ID specifically created for retrieving reports!).
+**iTC Reporter** (this Python script), on the other hand, solves both problems. It is written in pure Python and doesn't need Java or any external dependencies to function. Also, it can optionally read the App Store Connect access token from the OS X Keychain (though it generally is still advisable to use an extra Apple ID specifically created for retrieving reports!).
 
 ## How?
 
@@ -26,7 +28,7 @@ usage: reporter.py [-h] [-a ACCOUNT] [-m {Normal,Robot.XML}] -u USERID
                    {getStatus,getAccounts,getVendors,getVendorsAndRegions,getReportVersion,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,getPreOrderReport,generateToken,viewToken,deleteToken}
                    ...
 
-Reporting tool for querying Sales- and Financial Reports from iTunes Connect
+Reporting tool for querying Sales- and Financial Reports from App Store Connect
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -40,14 +42,14 @@ optional arguments:
 
 required arguments:
   -u USERID, --userid USERID
-                        Apple ID for use with iTunes Connect
+                        Apple ID for use with App Store Connect
 
 commands:
   Specify the task you want to be carried out (use -h after a command's name
   to get additional help for that command)
 
   {getStatus,getAccounts,getVendors,getVendorsAndRegions,getReportVersion,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,getPreOrderReport,generateToken,viewToken,deleteToken}
-    getStatus           check if iTunes Connect is available for queries
+    getStatus           check if App Store Connect is available for queries
     getAccounts         fetch a list of accounts accessible to the Apple ID
                         given in -u
     getVendors          fetch a list of vendors accessible to the Apple ID
@@ -75,12 +77,12 @@ commands:
                         to share their contact information with you
     getPreOrderReport   download a summary report file of pre-ordered items
                         for a specific date range
-    generateToken       generate a token for accessing iTunes Connect (expires
+    generateToken       generate a token for accessing App Store Connect (expires
                         after 180 days) and optionally store it in the macOS
                         Keychain
-    viewToken           display current iTunes Connect access token and its
+    viewToken           display current App Store Connect access token and its
                         expiration date
-    deleteToken         delete an existing iTunes Connect access token
+    deleteToken         delete an existing App Store Connect access token
 
 For a detailed description of report types, see
 http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
@@ -88,10 +90,10 @@ http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
 
 ### Prerequisites
 
-#### Obtaining an iTunes Connect access token
-Since end of July 2017, Apple requires the use of access tokens instead of passwords for **Reporter**. To generate an access token for an Apple ID, log in to iTunes Connect using the Apple ID that you plan to use with `reporter.py`. Go to *Sales and Trends > Reports*, then click on the tooltip next to *About Reports*. Click *Generate Access Token*. 
+#### Obtaining an App Store Connect access token
+Since end of July 2017, Apple requires the use of access tokens instead of passwords for **Reporter**. To generate an access token for an Apple ID, log in to App Store Connect using the Apple ID that you plan to use with `reporter.py`. Go to *Sales and Trends > Reports*, then click on the tooltip next to *About Reports*. Click *Generate Access Token*. 
 
-Or, instead of doing these steps manually, you can just let `reporter.py` fetch a token for you from iTunes Connect.  In addition, let's conveniently store it for future use in the macOS Keychain as an item named "iTC Access Token":
+Or, instead of doing these steps manually, you can just let `reporter.py` fetch a token for you from App Store Connect. In addition, let's conveniently store it for future use in the macOS Keychain as an item named "iTC Access Token":
 
 ```sh
 ./reporter.py -u your@apple-id.com generateToken -P YourAppleIDPassword --update-keychain-item "iTC Access Token"
@@ -114,7 +116,7 @@ As access tokens expire after 180 days it probably is desirable to make the proc
 
 ### Usage examples
 
-You are now equipped for regular use of this script by supplying your access token with the `-t` parameter. The following example queries iTunes Connect's availability status for financial reports while fetching the access token from the Keychain item named "iTC Access Token":
+You are now equipped for regular use of this script by supplying your access token with the `-t` parameter. The following example queries App Store Connect's availability status for financial reports while fetching the access token from the Keychain item named "iTC Access Token":
 
 ```sh
 ./reporter.py -u your@apple-id.com getStatus Finance -t "iTC Access Token"
@@ -129,7 +131,7 @@ Because your Apple ID could have access to multiple accounts, you will sometimes
 The result is a list of account numbers you can then specify with the `-a` or `--account` argument in later queries regarding sales reports. Similarly, you'd use `getAccounts Finance` in order to find out account numbers that can be used for financial report queries.
 
 #### Retrieving reports
-Let's get to the point of this tool now: Retrieving reports from iTunes Connect.
+Let's get to the point of this tool now: Retrieving reports from App Store Connect.
 To find out which vendor numbers you can query, you'll first need to get a list of available vendors, using (one of) the account number(s) you have found out with `getAccounts` before:
 
 ```sh

@@ -1,14 +1,17 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Reporting tool for querying Sales- and Financial Reports from iTunes Connect
+# Reporting tool for querying Sales- and Financial Reports from App Store Connect
 #
-# This script mimics the official iTunes Connect Reporter by Apple which is used
+# This script mimics the official App Store Connect Reporter by Apple which is used
 # to automatically retrieve Sales- and Financial Reports for your App Store sales.
 # It is written in pure Python and doesn’t need a Java runtime installation.
-# Opposed to Apple’s tool, it can fetch iTunes Connect login credentials from the
+# Opposed to Apple’s tool, it can fetch App Store Connect login credentials from the
 # macOS Keychain in order to tighten security a bit. Also, it goes the extra mile
 # and unzips the downloaded reports if possible.
+#
+# Before Apple in 2018 decided to rebrand it, App Store Connect used to be called
+# iTunes Connect or iTC in short – hence the name of this script.
 #
 # Copyright (c) 2016 fedoco <fedoco@users.noreply.github.com>
 #
@@ -38,7 +41,7 @@ VERSION = '2.2'
 ENDPOINT_SALES = 'https://reportingitc-reporter.apple.com/reportservice/sales/v1'
 ENDPOINT_FINANCE = 'https://reportingitc-reporter.apple.com/reportservice/finance/v1'
 
-# iTC queries
+# App Store Connect (formerly named iTC) queries
 
 def itc_get_vendors(args):
     command = 'Sales.getVendors'
@@ -127,12 +130,12 @@ def itc_delete_token(args):
 # login credentials
 
 def get_credentials(args):
-    """Select iTunes Connect login credentials depending on given command line arguments"""
+    """Select App Store Connect login credentials depending on given command line arguments"""
 
-    # for most commands an iTunes Connect access token is needed - fetched either from the command line or from Keychain...
+    # for most commands an App Store Connect access token is needed - fetched either from the command line or from Keychain...
     access_token = keychain.find_generic_password(None, args.access_token_keychain_item, '') if args.access_token_keychain_item else args.access_token
 
-    # ...but commands for access token manipulation need the plaintext password of the iTunes Connect account
+    # ...but commands for access token manipulation need the plaintext password of the App Store Connect account
     password = keychain.find_generic_password(None, args.password_keychain_item, '') if args.password_keychain_item else args.password 
 
     return (args.userid, access_token, password, str(args.account), args.mode)
@@ -199,7 +202,7 @@ def output_result(result, unzip = True):
 def parse_arguments():
     """Build and parse the command line arguments"""
 
-    parser_main = argparse.ArgumentParser(description="Reporting tool for querying Sales- and Financial Reports from iTunes Connect", epilog="For a detailed description of report types, see http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf")
+    parser_main = argparse.ArgumentParser(description="Reporting tool for querying Sales- and Financial Reports from App Store Connect", epilog="For a detailed description of report types, see http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf")
 
     # (most of the time) optional arguments
     parser_main.add_argument('-a', '--account', type=int, help="account number (needed if your Apple ID has access to multiple accounts; for a list of your account numbers, use the 'getAccounts' command)")
@@ -207,7 +210,7 @@ def parse_arguments():
 
     # always required arguments
     required_args = parser_main.add_argument_group("required arguments")
-    required_args.add_argument('-u', '--userid', required=True, help="Apple ID for use with iTunes Connect")
+    required_args.add_argument('-u', '--userid', required=True, help="Apple ID for use with App Store Connect")
 
     # template for commands that require authentication with password
     parser_auth_password = argparse.ArgumentParser(add_help=False)
@@ -222,13 +225,13 @@ def parse_arguments():
     parser_auth_token.set_defaults(password=None, password_keychain_item=None)
     auth_token_args = parser_auth_token.add_argument_group()
     mutex_group = auth_token_args.add_mutually_exclusive_group(required=True)
-    mutex_group.add_argument('-t', '--access-token-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the iTunes Connect access token (more secure alternative to -T)')
-    mutex_group.add_argument('-T', '--access-token', help='iTunes Connect access token (can be obtained with the generateToken command or via iTunes Connect -> Sales & Trends -> Reports -> About Reports)')
+    mutex_group.add_argument('-t', '--access-token-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the App Store Connect access token (more secure alternative to -T)')
+    mutex_group.add_argument('-T', '--access-token', help='App Store Connect access token (can be obtained with the generateToken command or via App Store Connect -> Sales & Trends -> Reports -> About Reports)')
 
     # commands
     subparsers = parser_main.add_subparsers(dest='command', title='commands', description="Specify the task you want to be carried out (use -h after a command's name to get additional help for that command)")
 
-    parser_cmd = subparsers.add_parser('getStatus', help="check if iTunes Connect is available for queries", parents=[parser_auth_token])
+    parser_cmd = subparsers.add_parser('getStatus', help="check if App Store Connect is available for queries", parents=[parser_auth_token])
     parser_cmd.add_argument('service', choices=['Sales', 'Finance'], help="service endpoint to query")
     parser_cmd.set_defaults(func=itc_get_status)
 
@@ -295,14 +298,14 @@ def parse_arguments():
     parser_cmd.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
     parser_cmd.set_defaults(func=itc_get_pre_order_report)
 
-    parser_cmd = subparsers.add_parser('generateToken', help="generate a token for accessing iTunes Connect (expires after 180 days) and optionally store it in the macOS Keychain", parents=[parser_auth_password])
+    parser_cmd = subparsers.add_parser('generateToken', help="generate a token for accessing App Store Connect (expires after 180 days) and optionally store it in the macOS Keychain", parents=[parser_auth_password])
     parser_cmd.add_argument('--update-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item in which the new access token should be stored in')
     parser_cmd.set_defaults(func=itc_generate_token)
 
-    parser_cmd = subparsers.add_parser('viewToken', help="display current iTunes Connect access token and its expiration date", parents=[parser_auth_password])
+    parser_cmd = subparsers.add_parser('viewToken', help="display current App Store Connect access token and its expiration date", parents=[parser_auth_password])
     parser_cmd.set_defaults(func=itc_view_token)
 
-    parser_cmd = subparsers.add_parser('deleteToken', help="delete an existing iTunes Connect access token", parents=[parser_auth_password])
+    parser_cmd = subparsers.add_parser('deleteToken', help="delete an existing App Store Connect access token", parents=[parser_auth_password])
     parser_cmd.set_defaults(func=itc_delete_token)
 
     args = parser_main.parse_args()
