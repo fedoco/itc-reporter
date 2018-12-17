@@ -33,7 +33,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import sys, argparse, urllib, urllib2, json, zlib, re, datetime
+import sys, argparse, urllib, urllib2, json, gzip, re, datetime, StringIO
 if sys.platform == 'darwin':
     import keychain
 
@@ -189,7 +189,7 @@ def output_result(result, unzip = True):
         if unzip:
             msg = msg.replace('.txt.gz', '.txt')
             filename = filename[:-3]
-            content = zlib.decompress(content, 15 + 32)
+            content = gzip.GzipFile(fileobj=StringIO.StringIO(content)).read()
         file = open(filename, 'w')
         file.write(content)
         file.close()
