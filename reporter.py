@@ -217,8 +217,8 @@ def parse_arguments():
     parser_auth_password.set_defaults(access_token=None, access_token_keychain_item=None)
     auth_password_args = parser_auth_password.add_argument_group()
     mutex_group = auth_password_args.add_mutually_exclusive_group(required=True)
-    mutex_group.add_argument('-p', '--password-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the Apple ID password (cannot be used together with -P)')
-    mutex_group.add_argument('-P', '--password', help='Apple ID password (cannot be used together with -p)')
+    mutex_group.add_argument('-p', '--password-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the (optionally app-specific) password for the Apple ID (cannot be used together with -P)')
+    mutex_group.add_argument('-P', '--password', help='(optionally app-specific) password for the Apple ID (cannot be used together with -p)')
 
     # template for commands that require authentication with access token
     parser_auth_token = argparse.ArgumentParser(add_help=False)
@@ -226,7 +226,7 @@ def parse_arguments():
     auth_token_args = parser_auth_token.add_argument_group()
     mutex_group = auth_token_args.add_mutually_exclusive_group(required=True)
     mutex_group.add_argument('-t', '--access-token-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item that holds the App Store Connect access token (more secure alternative to -T)')
-    mutex_group.add_argument('-T', '--access-token', help='App Store Connect access token (can be obtained with the generateToken command or via App Store Connect -> Sales & Trends -> Reports -> About Reports)')
+    mutex_group.add_argument('-T', '--access-token', help='App Store Connect access token (can be obtained with the generateToken command or via App Store Connect -> Sales & Trends -> Saved -> Sales & Trends - Reports -> About Reports)')
 
     # commands
     subparsers = parser_main.add_subparsers(dest='command', title='commands', description="Specify the task you want to be carried out (use -h after a command's name to get additional help for that command)")

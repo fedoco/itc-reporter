@@ -85,18 +85,22 @@ commands:
     deleteToken         delete an existing App Store Connect access token
 
 For a detailed description of report types, see
-http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
+https://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf
 ```
 
 ### Prerequisites
 
+#### Creating an app-specific password
+
+Assuming you are using two-factor authentication (2FA) with your Apple ID, you need to create an app-specific password for `reporter.py` by following [these instructions](https://support.apple.com/en-us/HT204397).
+
 #### Obtaining an App Store Connect access token
-Since end of July 2017, Apple requires the use of access tokens instead of passwords for **Reporter**. To generate an access token for an Apple ID, log in to App Store Connect using the Apple ID that you plan to use with `reporter.py`. Go to *Sales and Trends > Reports*, then click on the tooltip next to *About Reports*. Click *Generate Access Token*. 
+Since end of July 2017, Apple requires the use of access tokens instead of passwords for **Reporter**. To generate an access token for an Apple ID, log in to App Store Connect using the Apple ID that you plan to use with `reporter.py`. Go to *Sales and Trends > Saved > [Sales and Trends - Reports](https://appstoreconnect.apple.com/trends/reports)*, then click on the help icon next to *About Reports*. Click *Generate Access Token*. 
 
 Or, instead of doing these steps manually, you can just let `reporter.py` fetch a token for you from App Store Connect. In addition, let's conveniently store it for future use in the macOS Keychain as an item named "iTC Access Token":
 
 ```sh
-./reporter.py -u your@apple-id.com generateToken -P YourAppleIDPassword --update-keychain-item "iTC Access Token"
+./reporter.py -u your@apple-id.com generateToken -P <AppSpecificPassword> --update-keychain-item "iTC Access Token"
 
 Your new access token has been generated.
 AccessToken:4fbd6016-439d-4cef-a72e-5c465f8343d4
@@ -106,10 +110,10 @@ Keychain has been updated.
 
 #### Storing credentials securely with Keychain
 
-As access tokens expire after 180 days it probably is desirable to make the process of getting a new one automatable. But what about the cleartext Apple ID password following the -P parameter? It definitely should be fetched from Keychain, too, instead of having to pass it on the command line! To accomplish this, you need to manually create a keychain item holding your password. To do so, open the Keychain Access.app, select the default keychain, press ⌘N and fill in your Apple ID’s password. The item name you set for this new keychain entry is going to be what you have to supply for the `-p` (now lowercase!) parameter from now on. The command for obtaining a new access token now looks like this:
+As access tokens expire after 180 days it probably is desirable to make the process of getting a new one automatable. But what about the cleartext app-specific password following the -P parameter? It definitely should be fetched from Keychain, too, instead of having to pass it on the command line! To accomplish this, you need to manually create a keychain item holding your password. To do so, open the Keychain Access.app, select the default keychain, press ⌘N and fill in the app-specific password. The item name you set for this new keychain entry is going to be what you have to supply for the `-p` (now lowercase!) parameter from now on. The command for obtaining a new access token now looks like this:
 
 ```sh
-./reporter.py -u your@apple-id.com generateToken -p "iTC Password" --update-keychain-item "iTC Access Token"
+./reporter.py -u your@apple-id.com generateToken -p "iTC App-Specific Password" --update-keychain-item "iTC Access Token"
 ```
 
 **Please note:** Refreshing your access token using this command is only necessary after expiration (usually meaning every 180 days)! You can check for expiration with the `viewToken` command.
@@ -157,7 +161,7 @@ These examples should do for a quick introduction. Don't forget to read Apple's 
 ```
 
 ## What's still missing
-There seem to be [additional report types](http://help.apple.com/itc/contentreporterguide/en.lproj/static.html) available for retrieving Apple Music related data, but I wonder if anybody using this script would really need it.
+There seem to be [additional report types](https://help.apple.com/itc/contentreporterguide/en.lproj/static.html) available for retrieving Apple Music related data, but I wonder if anybody using this script would really need it.
 
 ## Obligatory disclaimer
 
