@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 # Reporting tool for querying Sales- and Financial Reports from App Store Connect
@@ -33,7 +33,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import sys, argparse, urllib, urllib2, json, gzip, re, datetime, StringIO
+import sys, argparse, urllib.request, urllib.parse, urllib.error, json, gzip, re, datetime, io
 if sys.platform == 'darwin':
     import keychain
 
@@ -107,7 +107,7 @@ def itc_generate_token(args):
 
     # generating a new token requires mirroring back a request id to the iTC server, so let's examine the response header...
     _, header = post_request(ENDPOINT_SALES, get_credentials(args), command)
-    service_request_id = header.dict['service_request_id']
+    service_request_id = header.get('service_request_id')
 
     # ...and post back the request id
     result = post_request(ENDPOINT_SALES, get_credentials(args), command, "&isExistingToken=Y&requestId=" + service_request_id)
@@ -117,11 +117,12 @@ def itc_generate_token(args):
     content, _ = result
     if content and args.update_keychain_item:
         # extract token for both operation modes (Robot.XML or Normal)
+        content = content.decode()
         token = re.findall('<AccessToken>(.*?)</AccessToken>', content) or re.findall('AccessToken:(.*?)$', content, re.M)
         if token:
             token = token[0]
             keychain.set_generic_password(None, args.update_keychain_item, '', token)
-            if not args.mode == 'Robot.XML': print "Keychain has been updated."
+            if not args.mode == 'Robot.XML': print("Keychain has been updated.")
 
 def itc_delete_token(args):
     command = 'Sales.deleteToken'
@@ -152,7 +153,9 @@ def build_json_request_string(credentials, query):
     if accessToken: request.update(accesstoken=accessToken)
     if password: request.update(password=password)
 
-    return urllib.urlencode(dict(jsonRequest=json.dumps(request)))
+    request = dict(jsonRequest=json.dumps(request))
+
+    return urllib.parse.urlencode(request)
 
 def post_request(endpoint, credentials, command, url_params = None):
     """Execute the HTTP POST request"""
@@ -161,19 +164,19 @@ def post_request(endpoint, credentials, command, url_params = None):
     request_data = build_json_request_string(credentials, command)
     if url_params: request_data += url_params
 
-    request = urllib2.Request(endpoint, request_data)
+    request = urllib.request.Request(endpoint, request_data.encode())
     request.add_header('Accept', 'text/html,image/gif,image/jpeg; q=.2, */*; q=.2')
 
     try:
-        response = urllib2.urlopen(request)
+        response = urllib.request.urlopen(request)
         content = response.read()
         header = response.info()
 
         return (content, header)
-    except urllib2.HTTPError, e:
+    except urllib.error.HTTPError as e:
         if e.code == 400 or e.code == 401 or e.code == 403 or e.code == 404:
             # for these error codes, the body always contains an error message
-            raise ValueError(e.read())
+            raise ValueError(e.read().decode())
         else:
             raise ValueError("HTTP Error %s. Did you choose reasonable query arguments?" % str(e.code))
 
@@ -183,26 +186,26 @@ def output_result(result, unzip = True):
     content, header = result
 
     # unpack content into the final report file if it is gzip compressed.
-    if header.gettype() == 'application/a-gzip':
-        msg = header.dict['downloadmsg']
-        filename = header.dict['filename'] or 'report.txt.gz'
+    if header.get_content_type() == 'application/a-gzip':
+        msg = header.get('downloadmsg')
+        filename = header.get('filename') or 'report.txt.gz'
         if unzip:
             msg = msg.replace('.txt.gz', '.txt')
             filename = filename[:-3]
-            content = gzip.GzipFile(fileobj=StringIO.StringIO(content)).read()
-        file = open(filename, 'w')
+            content = gzip.GzipFile(fileobj=io.BytesIO(content)).read()
+        file = open(filename, 'wb')
         file.write(content)
         file.close()
-        print msg
+        print(msg)
     else:
-        print content
+        print(content.decode())
 
 # command line arguments
 
 def parse_arguments():
     """Build and parse the command line arguments"""
 
-    parser_main = argparse.ArgumentParser(description="Reporting tool for querying Sales- and Financial Reports from App Store Connect", epilog="For a detailed description of report types, see http://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf")
+    parser_main = argparse.ArgumentParser(description="Reporting tool for querying Sales- and Financial Reports from App Store Connect", epilog="For a detailed description of report types, see https://help.apple.com/itc/appssalesandtrends/#/itc37a18bcbf")
 
     # (most of the time) optional arguments
     parser_main.add_argument('-a', '--account', type=int, help="account number (needed if your Apple ID has access to multiple accounts; for a list of your account numbers, use the 'getAccounts' command)")
@@ -312,7 +315,7 @@ def parse_arguments():
 
     try:
         validate_arguments(args)
-    except ValueError, e:
+    except ValueError as e:
         parser_main.error(e)
 
     return args
@@ -374,8 +377,8 @@ if __name__ == '__main__':
 
     try:
         args.func(args)
-    except ValueError, e:
-        print e
+    except ValueError as e:
+        print(e)
         exit(-1)
 
     exit(0)
