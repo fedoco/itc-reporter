@@ -18,7 +18,7 @@ Apple has shut down autoingestion on December 13th, 2016. Fortunately, it has be
 ### Java really is a sledge hammer to crack this nut
 There really is no compelling reason to employ a Java tool with its somewhat heavyweight dependency on JRE in order to download a few reports from App Store Connect. Apart from the Apple backend engineering staff really being into Java, apparently. Also, storing login credentials in cleartext isn't state of the art anymore.
 
-**iTC Reporter** (this Python script), on the other hand, solves both problems. It is written in pure Python and doesn't need Java or any external dependencies to function. Also, it can optionally read the App Store Connect access token from the OS X Keychain (though it generally is still advisable to use an extra Apple ID specifically created for retrieving reports!).
+**iTC Reporter** (this Python script), on the other hand, solves both problems. It is written in pure Python and doesn't need Java or any external dependencies to function. Also, it can optionally read the App Store Connect access token from the macOS Keychain (though it generally is still advisable to use an extra Apple ID specifically created for retrieving reports!).
 
 ## How?
 
@@ -48,7 +48,7 @@ commands:
   Specify the task you want to be carried out (use -h after a command's name
   to get additional help for that command)
 
-  {getStatus,getAccounts,getVendors,getVendorsAndRegions,getReportVersion,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,getPreOrderReport,generateToken,viewToken,deleteToken}
+  {getStatus,getAccounts,getVendors,getVendorsAndRegions,getReportVersion,getFinancialReport,getSalesReport,getSubscriptionReport,getSubscriptionEventReport,getSubscriberReport,getNewsstandReport,getOptInReport,getPreOrderReport,getPodcastsSubscriptionSnapshotReport,generateToken,viewToken,deleteToken}
     getStatus           check if App Store Connect is available for queries
     getAccounts         fetch a list of accounts accessible to the Apple ID
                         given in -u
@@ -77,6 +77,9 @@ commands:
                         to share their contact information with you
     getPreOrderReport   download a summary report file of pre-ordered items
                         for a specific date range
+    getPodcastsSubscriptionSnapshotReport
+                        download an aggregated Apple Podcasts Subscription Snapshot
+                        report file for a specific day
     generateToken       generate a token for accessing App Store Connect (expires
                         after 180 days) and optionally store it in the macOS
                         Keychain
@@ -104,7 +107,7 @@ Or, instead of doing these steps manually, you can just let `reporter.py` fetch 
 
 Your new access token has been generated.
 AccessToken:4fbd6016-439d-4cef-a72e-5c465f8343d4
-Expiration Date:2018-01-27
+Expiration Date:2024-01-27
 Keychain has been updated.
 ```
 
@@ -142,16 +145,16 @@ To find out which vendor numbers you can query, you'll first need to get a list 
 ./reporter.py -u your@apple-id.com --account 2821955 getVendors -t "iTC Access Token"
 ```
 
-The resulting vendor number(s) can then be used to get the actual reports. In the following example, a sales report listing the sales of a single day (2017/07/18) for vendor 85442109 is going to be retrieved: 
+The resulting vendor number(s) can then be used to get the actual reports. In the following example, a sales report listing the sales of a single day (2023/07/18) for vendor 85442109 is going to be retrieved: 
 
 ```sh
-./reporter.py -u your@apple-id.com -a 2821955 getSalesReport 85442109 Daily 20170718 -t "iTC Access Token"
+./reporter.py -u your@apple-id.com -a 2821955 getSalesReport 85442109 Daily 20230718 -t "iTC Access Token"
 ```
 
-Likewise, the following example fetches a financial report for sales in the US region in the first period of 2017 (according to Apple's fiscal calendar):
+Likewise, the following example fetches a financial report for sales in the US region in the first period of 2023 (according to Apple's fiscal calendar):
 
 ```sh
-./reporter.py -u your@apple-id.com -a 2821955 getFinancialReport 85442109 US 2017 01 -t "iTC Access Token"
+./reporter.py -u your@apple-id.com -a 2821955 getFinancialReport 85442109 US 2023 01 -t "iTC Access Token"
 ```
 
 These examples should do for a quick introduction. Don't forget to read Apple's [reference documentation](https://help.apple.com/itc/appsreporterguide/) for **Reporter**. Also, you can get further help for a specific command by supplying `-h` after the command's name. For example: 
@@ -161,7 +164,7 @@ These examples should do for a quick introduction. Don't forget to read Apple's 
 ```
 
 ## What's still missing
-There seem to be [additional report types](https://help.apple.com/itc/contentreporterguide/en.lproj/static.html) available for retrieving Apple Music related data, but I wonder if anybody using this script would really need it.
+There seem to be [additional report types](https://help.apple.com/itc/contentreporterguide/en.lproj/static.html) available for retrieving Apple Music and Apple Podcasts related data, but I wonder if anybody using this script would really need it.
 
 ## Obligatory disclaimer
 
