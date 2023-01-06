@@ -98,6 +98,10 @@ def itc_get_pre_order_report(args):
     command = 'Sales.getReport, {0},Pre-Order,Summary,{1},{2}'.format(args.vendor, args.datetype, args.date)
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
 
+def itc_get_podcasts_subscription_snapshot_report(args):
+    command = 'Sales.getReport, {0},apSubscriptionsSnapshot,Summary,Daily,{1}'.format(args.vendor, args.date)
+    output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
+
 def itc_view_token(args):
     command = 'Sales.viewToken'
     output_result(post_request(ENDPOINT_SALES, get_credentials(args), command))
@@ -300,6 +304,11 @@ def parse_arguments():
     parser_cmd.add_argument('datetype', choices=['Daily', 'Weekly', 'Monthly', 'Yearly'], help="length of time covered by the report")
     parser_cmd.add_argument('date', help="specific time covered by the report (weekly reports use YYYYMMDD, where the day used is the Sunday that week ends; monthly reports use YYYYMM; yearly reports use YYYY)")
     parser_cmd.set_defaults(func=itc_get_pre_order_report)
+
+    parser_cmd = subparsers.add_parser('getPodcastsSubscriptionSnapshotReport', help="download an aggregated Apple Podcasts Subscription Snapshot report file for a specific day", parents=[parser_auth_token])
+    parser_cmd.add_argument('vendor', type=int, help="vendor number of the report to download (for a list of your vendor numbers, use the 'getVendors' command)")
+    parser_cmd.add_argument('date', help="specific day covered by the report (use YYYYMMDD format)")
+    parser_cmd.set_defaults(func=itc_get_podcasts_subscription_snapshot_report)
 
     parser_cmd = subparsers.add_parser('generateToken', help="generate a token for accessing App Store Connect (expires after 180 days) and optionally store it in the macOS Keychain", parents=[parser_auth_password])
     parser_cmd.add_argument('--update-keychain-item', metavar="KEYCHAIN_ITEM", help='name of the macOS Keychain item in which the new access token should be stored in')
